@@ -66,7 +66,8 @@ def handle_options(options, log_data=None):
     # we need to return the data that we want encrypted here
     return line
 
-def encrypt_to_file(f, data, options, writeString=False):
+def encrypt_to_file(file_path, data, options, writeString=False):
+    f=open(file_path, 'w')
     nonce = Random.new().read(AES.block_size)
     if writeString:
         message = HARDCODED_STRING + "\n" + str(data)
@@ -77,14 +78,11 @@ def encrypt_to_file(f, data, options, writeString=False):
 
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
-    print "++++++++++++++++++++++++++"
-    print(message)
-    print "++++++++++++++++++++++++++"
 
     # first line of file is unencrypted nonce, 2nd line is encrypted
     # first line of encrypted is the hardcoded string, rest is log data
-    f.truncate()
     f.write(nonce + "\n" + ciphertext)
+    f.close()
 
 
 def handle_single_command(options):
@@ -97,8 +95,9 @@ def handle_single_command(options):
 
     if os.path.isfile(log_path):
         # appending to an existing log
-        f=open(log_path, 'r+w')
+        f=open(log_path, 'r')
         lines = f.readlines()
+        f.close()
         nonce = lines[0].rstrip() # remove new line
         ciphertext = ""
         for line in lines[1:]:
@@ -118,21 +117,14 @@ def handle_single_command(options):
             return -1
 
         result = handle_options(options, data[-1])
-        print "-------------------------"
-        print data
-        print "-------------------------"
         data = data[-1] + result
-        print data
-        encrypt_to_file(f, data, options, writeString=True)
-        f.close()
+        encrypt_to_file(log_path, data, options, writeString=True)
     else:
-        f=open(log_path, 'w')
         # this is a new log
 
         data = handle_options(options)
 
-        encrypt_to_file(f, data, options, writeString=True)
-        f.close()
+        encrypt_to_file(log_path, data, options, writeString=True)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-T", type=int, dest="timestamp")
