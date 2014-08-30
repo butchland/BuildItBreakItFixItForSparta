@@ -10,12 +10,49 @@ from Crypto import Random
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 
 def handle_options(options, log_data=None):
+    line = ""
     minimum_timestamp = 0
-    if options.timestamp <= 0:
-        # timestamps must be positive
-        sys.stdout.write('invalid')
+    timestamp = -1
+    if options.timestamp:
+        if options.timestamp <= 0:
+            # timestamps must be positive
+            sys.stdout.write('invalid')
+            return -1
+        print options.timestamp
+        line += str(timestamp) + ","
+        timestamp = options.timestamp
+    else:
         return -1
-
+    if options.token:
+        print options.token
+        # TODO: Authenticate token
+    else:
+        return -1
+    if options.employee_name and options.guest_name:
+        return -1
+    if options.employee_name:
+        if options.employee_name.isalpha():
+            line += "E,"+options.employee_name+","
+    else:
+        return -1
+    if options.guest_name:
+        if options.guest_name.isalpha():
+            line += "G,"+options.guest_name+","
+    else:
+        return -1
+    if options.arrival and options.departure:
+        return -1
+    if options.arrival:
+        line += "A,"
+    if options.derparture:
+        line += "D,"
+    if options.room_id:
+        if options.room_id <= 0:
+            return -1
+        line += str(options.room_id)
+    else:
+        line += "-1" # main gallery
+        
     # if log_data:
     #     most_recent_time = log_data[-1].split(' ')[0]
     #     if options.timestamp <= most_recent_time:
@@ -23,24 +60,27 @@ def handle_options(options, log_data=None):
     #         return -1
 
     # we need to return the data that we want encrypted here
+    print "line is: "+line
     return 'swag'
 
 def encrypt_to_file(f, data, options):
     nonce = Random.new().read(AES.block_size)
-    message = HARDCODED_STRING + "\n" + data
+    message = HARDCODED_STRING + "\n" + str(data)
 
     # encrypted under the -K option passed in as a 256 hash
     key = hashlib.sha256(options.token).digest()
 
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
+    
+    print(message)
 
     # first line of file is unencrypted nonce, 2nd line is encrypted
     # first line of encrypted is the hardcoded string, rest is log data
     f.write(nonce + "\n" + ciphertext)
 
 def handle_single_command(options, args):
-    log_path = sys.argv[-1]
+    log_path = args[0]
 
     if log_path == None:
         # we need the last argument to be the path to log
@@ -77,7 +117,6 @@ def handle_single_command(options, args):
 
         encrypt_to_file(f, data, options)
 
-
 def main():
     parser = OptionParser()
     parser.add_option("-T", type=int, dest="timestamp")
@@ -86,15 +125,17 @@ def main():
     parser.add_option("-G", dest="guest_name")
     parser.add_option("-A", dest="arrival")
     parser.add_option("-L", dest="departure")
-    parser.add_option("-R", dest="room_id")
+    parser.add_option("-R", type=int, dest="room_id")
     parser.add_option("-B", dest="file")
 
     (options, args) = parser.parse_args()
+    # TODO make return -1
+    #assert (len(args) == 1) # all options matched and log file specified
 
     # TODO handle the -B option
+    print len(args)
 
-    handle_single_command(options, sys.argv)
-
+    handle_single_command(options, args)
 
 if __name__ == "__main__":
     main()
