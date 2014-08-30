@@ -1,13 +1,27 @@
 #!/usr/bin/env python
 
-from optparse import OptionParser
+import argparse
 
 def main():
-    parser = OptionParser()
-    parser.add_option("-H", action='store_true', dest="html")
-    parser.add_option("-K", dest="token")
+    parser = argparse.ArgumentParser()
 
-    (options, args) = parser.parse_args()
+    parser.add_argument("-K", dest="token")
+    parser.add_argument("-H", dest="html", action='store_true')
+    parser.add_argument("-S", dest="current_state", action='store_true')
+    parser.add_argument("-R", dest="room_id")
+    parser.add_argument("-T", dest="total_time", action='store_true')
+    parser.add_argument("-I", dest="matching_rooms", action='store_true')
+    parser.add_argument("-A", dest="all_bound", action='store_true')
+    parser.add_argument("-B", dest="exclusive_bound", action='store_true')
+    parser.add_argument("-E", dest="employee_names", action='append')
+    parser.add_argument("-G", dest="guest_names", action='append')
+    parser.add_argument("-L", dest="lower_bounds", action='append')
+    parser.add_argument("-U", dest="upper_bounds", action='append')
+    parser.add_argument('log', help='string for log path')
+
+    args = parser.parse_args()
+
+    print(args)
 
     # TODO - actually do this
 

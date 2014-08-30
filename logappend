@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from optparse import OptionParser
+import argparse
 import sys
 import os.path
 import hashlib
@@ -39,8 +39,8 @@ def encrypt_to_file(f, data, options):
     # first line of encrypted is the hardcoded string, rest is log data
     f.write(nonce + "\n" + ciphertext)
 
-def handle_single_command(options, args):
-    log_path = sys.argv[-1]
+def handle_single_command(options):
+    log_path = options.log
 
     if log_path == None:
         # we need the last argument to be the path to log
@@ -79,21 +79,22 @@ def handle_single_command(options, args):
 
 
 def main():
-    parser = OptionParser()
-    parser.add_option("-T", type=int, dest="timestamp")
-    parser.add_option("-K", dest="token")
-    parser.add_option("-E", dest="employee_name")
-    parser.add_option("-G", dest="guest_name")
-    parser.add_option("-A", dest="arrival")
-    parser.add_option("-L", dest="departure")
-    parser.add_option("-R", dest="room_id")
-    parser.add_option("-B", dest="file")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-T", type=int, dest="timestamp")
+    parser.add_argument("-K", dest="token")
+    parser.add_argument("-E", dest="employee_name")
+    parser.add_argument("-G", dest="guest_name")
+    parser.add_argument("-A", dest="arrival", action='store_true')
+    parser.add_argument("-L", dest="departure", action='store_true')
+    parser.add_argument("-R", type=int, dest="room_id")
+    parser.add_argument("-B", dest="file")
+    parser.add_argument("log", help='string for log path')
 
-    (options, args) = parser.parse_args()
+    options = parser.parse_args()
 
     # TODO handle the -B option
 
-    handle_single_command(options, sys.argv)
+    handle_single_command(options)
 
 
 if __name__ == "__main__":
