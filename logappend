@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+import sys
+import os.path
+import hashlib
+from Crypto.Cipher import AES
+from Crypto import Random
+
+HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
+
+def handle_options(options, log_data=None):
+    minimum_timestamp = 0
+    if options.timestamp <= 0:
+        # timestamps must be positive
+        sys.stdout.write('invalid')
+        return -1
+
+    # if log_data:
+    #     most_recent_time = log_data[-1].split(' ')[0]
+    #     if options.timestamp <= most_recent_time:
+    #         sys.stdout.write('invalid')
+    #         return -1
+
+    # we need to return the data that we want encrypted here
+    return 'swag'
+
+def encrypt_to_file(f, data, options):
+    nonce = Random.new().read(AES.block_size)
+    message = HARDCODED_STRING + "\n" + data
+
+    # encrypted under the -K option passed in as a 256 hash
+    key = hashlib.sha256(options.token).digest()
+
+    obj = AES.new(key, AES.MODE_CFB, nonce)
+    ciphertext = obj.encrypt(message)
+
+    # first line of file is unencrypted nonce, 2nd line is encrypted
+    # first line of encrypted is the hardcoded string, rest is log data
+    f.write(nonce + "\n" + ciphertext)
+
+def handle_single_command(options, args):
+    log_path = sys.argv[-1]
+
+    if log_path == None:
+        # we need the last argument to be the path to log
+        sys.stdout.write('invalid')
+        return -1
+
+    if os.path.isfile(log_path):
+        # appending to an existing log
+        f=open(log_path, 'r+w')
+        lines = f.readlines()
+        nonce = lines[0].rstrip() # remove new line
+
+        ciphertext = lines[1].rstrip() # remove new line char
+
+        # decrypted under the -K option passed in as a 256 hash
+        key = hashlib.sha256(options.token).digest()
+        obj = AES.new(key, AES.MODE_CFB, nonce)
+
+        message = obj.decrypt(ciphertext)
+        data = message.splitlines()
+        if data[0] != HARDCODED_STRING:
+            # token was not correct if it didn't decrypt
+            # to the hardcoded string properly
+            sys.stderr.write("security error")
+            return -1
+
+        data = handle_options(options, data[1:])
+        encrypt_to_file(f, data, options)
+    else:
+        f=open(log_path, 'w')
+        # this is a new log
+
+        data = handle_options(options)
+
+        encrypt_to_file(f, data, options)
+
+
+def main():
+    parser = OptionParser()
+    parser.add_option("-T", type=int, dest="timestamp")
+    parser.add_option("-K", dest="token")
+    parser.add_option("-E", dest="employee_name")
+    parser.add_option("-G", dest="guest_name")
+    parser.add_option("-A", dest="arrival")
+    parser.add_option("-L", dest="departure")
+    parser.add_option("-R", dest="room_id")
+    parser.add_option("-B", dest="file")
+
+    (options, args) = parser.parse_args()
+
+    # TODO handle the -B option
+
+    handle_single_command(options, sys.argv)
+
+
+if __name__ == "__main__":
+    main()
+
