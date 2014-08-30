@@ -10,6 +10,8 @@ from Crypto import Random
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 
 def handle_options(options, log_data=None):
+    #print log_data
+    #return "no"
     line = ""
     minimum_timestamp = 0
     if options.timestamp:
@@ -17,13 +19,14 @@ def handle_options(options, log_data=None):
             # timestamps must be positive
             sys.stdout.write('invalid')
             return -1
-        print options.timestamp
+        #print options.timestamp
         line = line + str(options.timestamp) + ","
     else:
         return -1
     
     if options.token:
-        print options.token
+        #print options.token
+        pass
         # TODO: Authenticate token
     else:
         return -1
@@ -63,20 +66,24 @@ def handle_options(options, log_data=None):
     # we need to return the data that we want encrypted here
     return line
 
-def encrypt_to_file(f, data, options):
+def encrypt_to_file(f, data, options, writeString=False):
     nonce = Random.new().read(AES.block_size)
-    message = HARDCODED_STRING + "\n" + str(data)
-
+    if writeString:
+        message = HARDCODED_STRING + "\n" + str(data)
+    else:
+        message = str(data)
     # encrypted under the -K option passed in as a 256 hash
     key = hashlib.sha256(options.token).digest()
 
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
-    
+    print "++++++++++++++++++++++++++"
     print(message)
+    print "++++++++++++++++++++++++++"
 
     # first line of file is unencrypted nonce, 2nd line is encrypted
     # first line of encrypted is the hardcoded string, rest is log data
+    f.truncate()
     f.write(nonce + "\n" + ciphertext)
 
 
@@ -93,8 +100,10 @@ def handle_single_command(options):
         f=open(log_path, 'r+w')
         lines = f.readlines()
         nonce = lines[0].rstrip() # remove new line
-
-        ciphertext = lines[1].rstrip() # remove new line char
+        ciphertext = ""
+        for line in lines[1:]:
+            ciphertext += line.rstrip()
+        #ciphertext = "".join(lines[1:])
 
         # decrypted under the -K option passed in as a 256 hash
         key = hashlib.sha256(options.token).digest()
@@ -108,16 +117,22 @@ def handle_single_command(options):
             sys.stderr.write("security error")
             return -1
 
-        data = handle_options(options, data[1:])
-        encrypt_to_file(f, data, options)
+        result = handle_options(options, data[-1])
+        print "-------------------------"
+        print data
+        print "-------------------------"
+        data = data[-1] + result
+        print data
+        encrypt_to_file(f, data, options, writeString=True)
+        f.close()
     else:
         f=open(log_path, 'w')
         # this is a new log
 
         data = handle_options(options)
 
-        encrypt_to_file(f, data, options)
-
+        encrypt_to_file(f, data, options, writeString=True)
+        f.close()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-T", type=int, dest="timestamp")
