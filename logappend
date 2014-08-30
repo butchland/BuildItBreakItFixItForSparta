@@ -12,39 +12,40 @@ HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 def handle_options(options, log_data=None):
     line = ""
     minimum_timestamp = 0
-    timestamp = -1
     if options.timestamp:
         if options.timestamp <= 0:
             # timestamps must be positive
             sys.stdout.write('invalid')
             return -1
         print options.timestamp
-        line += str(timestamp) + ","
-        timestamp = options.timestamp
+        line = line + str(options.timestamp) + ","
     else:
         return -1
+    
     if options.token:
         print options.token
         # TODO: Authenticate token
     else:
         return -1
+        
     if options.employee_name and options.guest_name:
         return -1
     if options.employee_name:
         if options.employee_name.isalpha():
             line += "E,"+options.employee_name+","
-    else:
-        return -1
+        else:
+            return -1
     if options.guest_name:
         if options.guest_name.isalpha():
             line += "G,"+options.guest_name+","
-    else:
-        return -1
+        else:
+            return -1
+        
     if options.arrival and options.departure:
         return -1
     if options.arrival:
         line += "A,"
-    if options.derparture:
+    if options.departure:
         line += "D,"
     if options.room_id:
         if options.room_id <= 0:
@@ -60,8 +61,7 @@ def handle_options(options, log_data=None):
     #         return -1
 
     # we need to return the data that we want encrypted here
-    print "line is: "+line
-    return 'swag'
+    return line
 
 def encrypt_to_file(f, data, options):
     nonce = Random.new().read(AES.block_size)
@@ -133,7 +133,6 @@ def main():
     options = parser.parse_args()
 
     # TODO handle the -B option
-    print len(args)
 
     handle_single_command(options)
 
