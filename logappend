@@ -15,14 +15,15 @@ def handle_options(options, log_data=None):
     if options.timestamp:
         if options.timestamp <= 0:
             # timestamps must be positive
-            sys.stdout.write('invalid')
             return -1
         #print options.timestamp
         line = line + str(options.timestamp) + ","
     else:
         return -1
         
-    if options.employee_name and options.guest_name:
+    if options.employee_name and options.guest_name: # can't both exist
+        return -1
+    if options.employee_name == options.guest_name: # can't both not exist
         return -1
     if options.employee_name:
         if options.employee_name.isalpha():
@@ -35,7 +36,7 @@ def handle_options(options, log_data=None):
         else:
             return -1
         
-    if options.arrival and options.departure:
+    if options.arrival == options.departure: # mutually exclusive
         return -1
     if options.arrival:
         line += "A,"
@@ -76,7 +77,10 @@ def handle_single_command(options):
 
     if log_path == None:
         # we need the last argument to be the path to log
-        sys.stdout.write('invalid')
+        return -1
+
+    if options.token == None:
+        # need to submit a token
         return -1
 
     if os.path.isfile(log_path):
@@ -99,10 +103,11 @@ def handle_single_command(options):
         if data[0] != HARDCODED_STRING:
             # token was not correct if it didn't decrypt
             # to the hardcoded string properly
-            sys.stderr.write("security error")
-            return -1
+            return -2
 
         result = handle_options(options, data[1:])
+        if result == -1:
+            return -1
         # data is new line separated
         # each line has comma separated
         to_encrypt = "\n".join(data[1:] + [result])
@@ -129,7 +134,13 @@ def main():
 
     # TODO handle the -B option
 
-    handle_single_command(options)
+    result = handle_single_command(options)
+    if result == -2:
+        sys.stderr.write("security error")
+        sys.exit(-1)
+    if result == -1:
+        sys.stdout.write('invalid')
+        sys.exit(-1)
 
 
 if __name__ == "__main__":
