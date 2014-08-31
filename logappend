@@ -10,8 +10,6 @@ from Crypto import Random
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 
 def handle_options(options, log_data=None):
-    #print log_data
-    #return "no"
     line = ""
     minimum_timestamp = 0
     if options.timestamp:
@@ -21,13 +19,6 @@ def handle_options(options, log_data=None):
             return -1
         #print options.timestamp
         line = line + str(options.timestamp) + ","
-    else:
-        return -1
-    
-    if options.token:
-        #print options.token
-        pass
-        # TODO: Authenticate token
     else:
         return -1
         
@@ -56,14 +47,7 @@ def handle_options(options, log_data=None):
         line += str(options.room_id)
     else:
         line += "-1" # main gallery
-        
-    # if log_data:
-    #     most_recent_time = log_data[-1].split(' ')[0]
-    #     if options.timestamp <= most_recent_time:
-    #         sys.stdout.write('invalid')
-    #         return -1
 
-    # we need to return the data that we want encrypted here
     return line
 
 def encrypt_to_file(file_path, data, options, writeString=False):
@@ -78,6 +62,8 @@ def encrypt_to_file(file_path, data, options, writeString=False):
 
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
+
+    print(message)
 
     # first line of file is unencrypted nonce, 2nd line is encrypted
     # first line of encrypted is the hardcoded string, rest is log data
@@ -116,9 +102,11 @@ def handle_single_command(options):
             sys.stderr.write("security error")
             return -1
 
-        result = handle_options(options, data[-1])
-        data = data[-1] + result
-        encrypt_to_file(log_path, data, options, writeString=True)
+        result = handle_options(options, data[1:])
+        # data is new line separated
+        # each line has comma separated
+        to_encrypt = "\n".join(data[1:] + [result])
+        encrypt_to_file(log_path, to_encrypt, options, writeString=True)
     else:
         # this is a new log
 
