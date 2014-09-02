@@ -61,6 +61,7 @@ testcustomallbound: logappend logread
 	./logappend -T 11 -K secret -L -E Bob testcustomallbound
 	./logappend -T 12 -K secret -A -E Fred testcustomallbound
 	./logappend -T 29 -K secret -A -G Swagger testcustomallbound
+
 	./logread -K secret -A -L 1 -U 13 testcustomallbound > tmp12
 	echo -ne "Bob,Fred" > tmp13
 	diff tmp12 tmp13
@@ -79,6 +80,28 @@ testcustomallbound: logappend logread
 	./logread -K secret -A -L 50 -U 51 testcustomallbound > tmp19
 	echo -ne "" > tmp20
 	diff tmp19 tmp20
+
+testcustomexclusivebound: logappend logread
+	./logappend -T 1 -K secret -A -E Fred testcustomexclusivebound
+	./logappend -T 2 -K secret -A -G Jill testcustomexclusivebound
+	./logappend -T 5 -K secret -L -E Fred testcustomexclusivebound
+	./logappend -T 9 -K secret -A -E Bob testcustomexclusivebound
+	./logappend -T 11 -K secret -L -E Bob testcustomexclusivebound
+	./logappend -T 12 -K secret -A -E Fred testcustomexclusivebound
+	./logappend -T 29 -K secret -A -G Swagger testcustomexclusivebound
+
+	./logread -K secret -B -L 1 -U 13 -L 5 -U 8 testcustomexclusivebound > tmp21
+	echo -ne "Bob" > tmp22
+	diff tmp21 tmp22
+
+	./logread -K secret -B -L 1 -U 2 -L 9 -U 11 testcustomexclusivebound > tmp23
+	echo -ne "Fred" > tmp24
+	diff tmp23 tmp24
+
+	./logread -K secret -B -L 15 -U 30 -L 9 -U 11 testcustomexclusivebound > tmp25
+	diff tmp25 tmp24
+
+	
 
 
 clean:
