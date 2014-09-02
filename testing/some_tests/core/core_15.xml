@@ -1,3 +1,0 @@
-<test type="correctness"><commands><command><args>-T 1 -K CHAKVJXP -E MINDY -A HYJJNYHB</args><program>logappend</program></command><command><args>-T 2 -K CHAKVJXP -E MINDY -L HYJJNYHB</args><program>logappend</program></command><command><args>-T 3 -K CHAKVJXP -E TONEY -A HYJJNYHB</args><program>logappend</program></command><command><args>-T 4 -K CHAKVJXP -E THERSA -A HYJJNYHB</args><program>logappend</program></command><command><args>-K CHAKVJXP -S HYJJNYHB</args><program>logread</program><output>THERSA,TONEY
-
-</output><erroutput /><returncode>0</returncode></command></commands></test>
