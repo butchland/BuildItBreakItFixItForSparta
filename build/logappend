@@ -111,7 +111,7 @@ def handle_options(options, log_data=None):
         else:
             data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
 
-    result = json.dumps(data)
+    result = json.dumps(data, separators=(',',':'))
     return result
 
 def encrypt_to_file(file_path, data, options):
