@@ -105,6 +105,7 @@ So, if logappend and logread were in the directory ~/build then you
 could run the previously generated test by doing
 
 ./check_test.py --prefix ~/build --xml out.xml
+./check_test.py --prefix ~/dev/hackathon/security --xml out.xml
 
 ['/home/ubuntu/build/logappend', '-T', '1', '-K', 'SMVGSEJK', '-E', 'SUK', '-A', 'UHALYLWO']
 expected out  got 
