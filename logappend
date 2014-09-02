@@ -64,13 +64,15 @@ def handle_options(options, log_data=None):
                     return -1
                 else:
                     # successfully entered gallery for first time
-                    database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+                    database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
             else:
                 if options.room_id:
                     if database[name]['s'] == GALLERY_LOCATION:
                         # successfully entered room
                         # set status
                         database[name]['s'] = options.room_id
+                        # set new room got to
+                        database[name]['r'].append(str(options.room_id))
 
                         # show when room was entered
                         if options.room_id in database[name]:
@@ -104,9 +106,9 @@ def handle_options(options, log_data=None):
             # can't enter a room first
             return -1
         if options.guest_name:
-            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
         else:
-            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
 
     result = json.dumps(data)
     return result
@@ -202,6 +204,12 @@ def main():
     # TODO handle the -B option
 
     result = handle_single_command(options)
+    # try:
+    #     result = handle_single_command(options)
+    # except Exception, e:
+    #     # exit due to an error condition
+    #     result = -1
+
     if result == -2:
         sys.stderr.write("security error")
         sys.exit(-1)
