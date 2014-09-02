@@ -35,7 +35,7 @@ def handle_options(options, log_data=None):
                 # no data on user
                 # a user not in our system can't leave
                 return -1
-            if options.room_id:
+            if options.room_id != None:
                 if database[name]['s'] == options.room_id:
                     # sucessfully left the room
                     # set status
@@ -59,7 +59,7 @@ def handle_options(options, log_data=None):
             # this is an arrival
             if not name in database:
                 # no data on user
-                if options.room_id:
+                if options.room_id != None:
                     # can't enter a room first
                     return -1
                 else:
