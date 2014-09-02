@@ -121,7 +121,20 @@ def handle_read(options):
             assert(len(options.employee_names) == 1)
             datalog = data['e'][options.employee_names[0]]
 
-        sys.stdout.write(",".join(datalog['r']))
+        if options.html:
+            html = "<html><body><table><tr><th>Rooms</th></tr>"
+
+            for room in datalog['r']:
+                html += "<tr><td>" + str(room) + "</td></tr>"
+
+            html += "</table></body></html>"
+
+            sys.stdout.write(html)
+        else:
+            sys.stdout.write(",".join(datalog['r']))
+
+        # successfully printed rooms_entered
+        return
 
 
 
