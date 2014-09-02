@@ -1,5 +1,7 @@
 SHELL = bash
 
+dummy:
+	echo "no make necessary"
 testclean: test clean
 test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml
 
