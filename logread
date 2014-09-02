@@ -187,7 +187,36 @@ def handle_read(options):
         return 0
 
     if options.matching_rooms:
-        "TODO"
+        other_targets = []
+        # other_targets will be array of datalogs that the target needs
+        # to be in the same room as
+        if options.employee_names:
+            # use first employee as target
+            target = data['e'][options.employee_names[0]]
+            options.employee_names.pop(0) # don't need that value anymore
+            for employee in options.employee_names:
+                other_targets.append(data['e'][employee])
+
+            if options.guest_names:
+                for guest in options.guest_names:
+                    other_targets.append(data['g'][guest])
+        else:
+            # theres no employees, use the first guest as target
+            target = data['g'][options.guest_names[0]]
+            options.guest_names.pop(0) # don't need that value anymore
+            for guest in options.guest_names:
+                other_targets.append(data['g'][guest])
+
+        # [l1, u1, l2, u2...] increasing
+        # [l1, u1, l2, u2...]
+
+        # a = [(l1, u1)]
+        # b = [(l1, u1), (l2, u2)...]
+        # for i in range(len(a)):
+        #     for j in range(len(b)):
+        #         if a[i][1] > b[j][0]:
+        #             return False
+
         return
 
     if options.all_bound:
@@ -202,7 +231,10 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if inbounds(info['ga'], lower_bound, upper_bound, data['t']):
+            if len(info['ga']) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                info['ga'].append(data['t'])
+            if inbounds(info['ga'], lower_bound, upper_bound):
                 employees.append(employee)
 
         employees.sort()
@@ -215,6 +247,9 @@ def handle_read(options):
             sys.stdout.write(html)
         else:
             sys.stdout.write(",".join(employees))
+
+        # success for all bound
+        return
 
 
     if options.exclusive_bound:
@@ -235,8 +270,11 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if inbounds(info['ga'], lower_bound, upper_bound, data['t']):
-                if not inbounds(info['ga'], lower_exclude_bound, upper_exclude_bound, data['t']):
+            if len(info['ga']) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                info['ga'].append(data['t'])
+            if inbounds(info['ga'], lower_bound, upper_bound):
+                if not inbounds(info['ga'], lower_exclude_bound, upper_exclude_bound):
                     employees.append(employee)
 
         employees.sort()
@@ -250,8 +288,11 @@ def handle_read(options):
         else:
             sys.stdout.write(",".join(employees))
 
+        # success for exclusive bound
+        return
 
-def inbounds(arr, lower_bound, upper_bound, current_time):
+
+def inbounds(arr, lower_bound, upper_bound):
     for idx, val in enumerate(arr):
         if val >= lower_bound:
             if idx % 2 == 0:
@@ -263,12 +304,7 @@ def inbounds(arr, lower_bound, upper_bound, current_time):
                 # at the point of the lower bound.  Success
                 return True
 
-    if len(arr) % 2 == 1:
-        # target is currently in the gallery
-        # target is in bounds if the current time is larger than lower bound
-        return current_time >= lower_bound
     # target cannot be in gallery, he has no time signatures within the bounds
-    # and is currently outside the gallery
     return False
 
 
