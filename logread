@@ -207,16 +207,77 @@ def handle_read(options):
             for guest in options.guest_names:
                 other_targets.append(data['g'][guest])
 
-        # [l1, u1, l2, u2...] increasing
-        # [l1, u1, l2, u2...]
+        rooms = []
+        for room in target:
+            failed = False
+            if room == 'g' || room == 'r' || room == 's':
+                # not rooms, just data
+                continue
+            target_list = target[room]
+            if len(target_list) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                target_list.append(data['t'])
 
-        # a = [(l1, u1)]
-        # b = [(l1, u1), (l2, u2)...]
-        # for i in range(len(a)):
-        #     for j in range(len(b)):
-        #         if a[i][1] > b[j][0]:
-        #             return False
+            target_bounds = []
 
+            for i in range(len(target_list)/2):
+                target_bounds.append((target_list[i*2], target_list[i*2 + 1]))
+
+            for other_target in other_targets:
+                if not room in other_target:
+                    # can't match this room if one of the users never went in that room
+                    failed = True
+                    break
+                other_target_list = other_target[room]
+                if len(other_target_list) % 2 == 1:
+                    # still in the gallery, append the current time as final upper bound
+                    other_target_list.append(data['t'])
+                other_target_bounds = []
+                for i in range(len(other_target_list)/2):
+                    other_target_bounds.append((other_target_bounds[i*2], other_target_bounds[i*2 + 1]))
+
+                new_target_bounds = []
+                while len(target_bounds) != 0 and len(other_target_bounds) != 0:
+                    x, y = target_bounds[0]
+                    a, b = other_target_bounds[0]
+
+                    if x > b:
+                        # advance tup2
+                    elif y < a:
+                        # advance tup1
+                    else: # x <= b:
+                        base = max(x, a)
+                        # intersection from base up
+                        if y < b:
+                            new_target_bounds.append((base, y))
+                            target_bounds.pop(0)
+                        elif y > b:
+                            new_target_bounds.append((base, b))
+                            other_target_bounds.pop(0)
+                        else:
+                            new_target_bounds.append((base, y))
+                            target_bounds.pop(0)
+                            other_target_bounds.pop(0)
+                if len(new_target_bounds) == 0:
+                    failed = True
+                    break
+                target_bounds = new_target_bounds
+
+
+            if not failed:
+                rooms.append(room)
+
+        rooms.sort()
+        if options.html:
+            html = "<html><body><table><tr><th>Rooms</th></tr>"
+            for room in rooms:
+                html += "<tr><td>" + str(room) + "</th></td>"
+            html += "</table></body></html>"
+            sys.stdout.write(html)
+        else:
+            sys.stdout.write(",".join(rooms))
+
+        # success for matching rooms
         return
 
     if options.all_bound:
@@ -240,9 +301,9 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            html = "<html><body><table>"
+            html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
-                html += "<tr><th>" + employee + "</th></tr>"
+                html += "<tr><td>" + employee + "</th></td>"
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
@@ -280,9 +341,9 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            html = "<html><body><table>"
+            html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
-                html += "<tr><th>" + employee + "</th></tr>"
+                html += "<tr><td>" + employee + "</th></td>"
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
