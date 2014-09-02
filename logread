@@ -116,7 +116,7 @@ def handle_read(options):
             sys.stdout.write("\n".join(result))
 
         # success printed current state
-        return
+        return 0
 
     if options.rooms_entered:
         if options.guest_names:
@@ -140,7 +140,43 @@ def handle_read(options):
             sys.stdout.write(",".join(datalog['r']))
 
         # successfully printed rooms_entered
-        return
+        return 0
+
+    if options.total_time:
+        assert(options.html == None)
+        if options.guest_names:
+            assert(options.employee_names == None)
+            assert(len(options.guest_names) == 1)
+
+            if options.guest_names[0] in data['g']:
+                datalog = data['g'][options.guest_names[0]]
+            else:
+                return 0 # print nothing
+        else:
+            assert(len(options.employee_names) == 1)
+            if options.employee_names[0] in data['e'][options.employee_names[0]]:
+                datalog = data['e'][options.employee_names[0]]
+            else:
+                return 0 # print nothing
+
+        arr = datalog['ga'] # look at ranges in the gallery
+        time = 0
+
+        for i in range(len(arr) / 2):
+            lower = arr[i * 2]
+            upper = arr[(i * 2) + 1]
+            time += (upper - lower)
+
+        if len(arr) % 2 == 1:
+            lower = arr[-1]
+            upper = data['t'] # current time
+            time += (upper - lower)
+
+        sys.stdout.write(time)
+
+        # successful print total time in gallery
+        return 0
+
 
 
 
@@ -162,7 +198,15 @@ def main():
     parser.add_argument("-U", dest="upper_bounds", action='append')
     parser.add_argument('log', help='string for log path')
 
+
+
     args = parser.parse_args()
+    invocation = [args.current_state, args.rooms_entered, args.total_time, args.matching_rooms, args.all_bound, args.exclusive_bound]
+    if sum(invocation) != 1:
+        # can't specify more than one option
+        sys.stdout.write('invalid')
+        sys.exit(-1)
+
 
     result = handle_read(args)
 
