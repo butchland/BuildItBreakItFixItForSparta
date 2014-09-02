@@ -1,10 +1,10 @@
 SHELL = bash
 
 testclean: test clean
-test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml
 
 
-testcustomtotaltime: logappend logread
+testcustomtotaltime:
 	./logappend -T 1 -K secret -A -E Fred testcustomtotaltime
 	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomtotaltime
 	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomtotaltime
@@ -15,7 +15,7 @@ testcustomtotaltime: logappend logread
 	echo -ne "9" > tmp1
 	diff tmp tmp1
 
-testcustomexample: logappend logread
+testcustomexample:
 	./logappend -T 1 -K secret -A -E Fred testcustomexample
 	./logappend -T 2 -K secret -A -G Jill testcustomexample
 	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomexample
@@ -34,14 +34,14 @@ testcustomexample: logappend logread
 	echo -ne "1,2,3,1" > tmp5
 	diff tmp4 tmp5
 
-testcustombatch: logappend logread
+testcustombatch:
 	echo -ne "-K secret -T 0 -A -E John testcustombatch\n-K secret -T 1 -A -R 0 -E John testcustombatch\n-K secret -T 2 -A -G James testcustombatch\n-K secret -T 3 -A -R 0 -G James testcustombatch" > testcustombatchfile
 	./logappend -B testcustombatchfile
 	./logread -K secret -S testcustombatch > tmp6
 	echo -ne "John\nJames\n0: James,John" > tmp7
 	diff tmp6 tmp7
 
-testcustomsecurity: logappend logread
+testcustomsecurity:
 	./logappend -T 1 -K secret -A -E Fred testcustomsecurity
 	./logappend -T 2 -K secret -A -G Jill testcustomsecurity
 	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomsecurity
@@ -53,7 +53,7 @@ testcustomsecurity: logappend logread
 	echo -ne "security error" > tmp11
 	diff tmp10 tmp11
 
-testcustomallbound: logappend logread
+testcustomallbound:
 	./logappend -T 1 -K secret -A -E Fred testcustomallbound
 	./logappend -T 2 -K secret -A -G Jill testcustomallbound
 	./logappend -T 5 -K secret -L -E Fred testcustomallbound
@@ -81,7 +81,7 @@ testcustomallbound: logappend logread
 	echo -ne "" > tmp20
 	diff tmp19 tmp20
 
-testcustomexclusivebound: logappend logread
+testcustomexclusivebound:
 	./logappend -T 1 -K secret -A -E Fred testcustomexclusivebound
 	./logappend -T 2 -K secret -A -G Jill testcustomexclusivebound
 	./logappend -T 5 -K secret -L -E Fred testcustomexclusivebound
@@ -101,7 +101,7 @@ testcustomexclusivebound: logappend logread
 	./logread -K secret -B -L 15 -U 30 -L 9 -U 11 testcustomexclusivebound > tmp25
 	diff tmp25 tmp24
 
-testcustommatchingrooms: logappend logread
+testcustommatchingrooms:
 	./logappend -T 11 -K JOKIXTQE -E ERASMO -A testcustommatchingrooms 
 	./logappend -T 21 -K JOKIXTQE -E HILDEGARDE -A testcustommatchingrooms 
 	./logappend -T 31 -K JOKIXTQE -E ERASMO -A -R 18 testcustommatchingrooms 
@@ -116,8 +116,25 @@ testcustommatchingrooms: logappend logread
 	echo -ne "18" > tmp27
 	diff tmp26 tmp27
 
-	
+testcustomhtml:
+	./logappend -T 1 -K secret -A -E Fred testcustomhtml
+	./logappend -T 2 -K secret -A -G Jill testcustomhtml
+	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomhtml
+	./logappend -T 4 -K secret -A -G Jill -R 1 testcustomhtml
+	./logread -K secret -H -S testcustomhtml > tmp28
+	echo -ne "<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>Fred</td><td>Jill</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr><tr><td>1</td><td>Fred,Jill</td></tr></table></body></html>" > tmp29
+	diff tmp28 tmp29
 
+	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomhtml
+	./logappend -T 6 -K secret -A -E Fred -R 2 testcustomhtml
+	./logappend -T 7 -K secret -L -E Fred -R 2 testcustomhtml
+	./logappend -T 8 -K secret -A -E Fred -R 3 testcustomhtml
+	./logappend -T 9 -K secret -L -E Fred -R 3 testcustomhtml
+	./logappend -T 10 -K secret -A -E Fred -R 1 testcustomhtml
+	./logread -K secret -H -R -E Fred testcustomhtml > tmp30
+
+	echo -ne "<html><body><table><tr><th>Rooms</th></tr><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr><tr><td>1</td></tr></table></body></html>" > tmp31
+	diff tmp30 tmp31
 
 clean:
 	rm testcustom* tmp*

@@ -247,7 +247,7 @@ def handle_read(options):
                         target_bounds.pop(0)
                     else: # x <= b:
                         base = max(x, a)
-                        # intersection from base up
+                        # intersection from base up found
                         if y < b:
                             new_target_bounds.append((base, y))
                             target_bounds.pop(0)
