@@ -210,7 +210,7 @@ def handle_read(options):
         rooms = []
         for room in target:
             failed = False
-            if room == 'g' || room == 'r' || room == 's':
+            if room == 'ga' or room == 'r' or room == 's':
                 # not rooms, just data
                 continue
             target_list = target[room]
@@ -234,7 +234,7 @@ def handle_read(options):
                     other_target_list.append(data['t'])
                 other_target_bounds = []
                 for i in range(len(other_target_list)/2):
-                    other_target_bounds.append((other_target_bounds[i*2], other_target_bounds[i*2 + 1]))
+                    other_target_bounds.append((other_target_list[i*2], other_target_list[i*2 + 1]))
 
                 new_target_bounds = []
                 while len(target_bounds) != 0 and len(other_target_bounds) != 0:
@@ -242,9 +242,9 @@ def handle_read(options):
                     a, b = other_target_bounds[0]
 
                     if x > b:
-                        # advance tup2
+                        other_target_bounds.pop(0)
                     elif y < a:
-                        # advance tup1
+                        target_bounds.pop(0)
                     else: # x <= b:
                         base = max(x, a)
                         # intersection from base up

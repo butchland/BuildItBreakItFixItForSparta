@@ -1,7 +1,7 @@
 SHELL = bash
 
 testclean: test clean
-test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms
 
 
 testcustomtotaltime: logappend logread
@@ -100,6 +100,21 @@ testcustomexclusivebound: logappend logread
 
 	./logread -K secret -B -L 15 -U 30 -L 9 -U 11 testcustomexclusivebound > tmp25
 	diff tmp25 tmp24
+
+testcustommatchingrooms: logappend logread
+	./logappend -T 11 -K JOKIXTQE -E ERASMO -A testcustommatchingrooms 
+	./logappend -T 21 -K JOKIXTQE -E HILDEGARDE -A testcustommatchingrooms 
+	./logappend -T 31 -K JOKIXTQE -E ERASMO -A -R 18 testcustommatchingrooms 
+	./logappend -T 41 -K JOKIXTQE -E HILDEGARDE -A -R 16 testcustommatchingrooms 
+	./logappend -T 51 -K JOKIXTQE -E HILDEGARDE -L -R 16 testcustommatchingrooms 
+	./logappend -T 52 -K JOKIXTQE -E HILDEGARDE -A -R 18 testcustommatchingrooms 
+	./logappend -T 53 -K JOKIXTQE -E HILDEGARDE -L -R 18 testcustommatchingrooms 
+	./logappend -T 71 -K JOKIXTQE -E ERASMO -L -R 18 testcustommatchingrooms 
+	./logappend -T 81 -K JOKIXTQE -E ERASMO -A -R 17 testcustommatchingrooms 
+	./logappend -T 91 -K JOKIXTQE -E ERASMO -L -R 17 testcustommatchingrooms
+	./logread -K JOKIXTQE -I -E ERASMO -E HILDEGARDE testcustommatchingrooms > tmp26
+	echo -ne "18" > tmp27
+	diff tmp26 tmp27
 
 	
 
