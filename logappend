@@ -6,56 +6,116 @@ import os.path
 import hashlib
 from Crypto.Cipher import AES
 from Crypto import Random
+import json
+import re
 
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
+GALLERY_LOCATION = -1
+OUT_OF_GALLERY_LOCATION = -2
 
 def handle_options(options, log_data=None):
-    line = ""
-    minimum_timestamp = 0
-    if options.timestamp:
-        if options.timestamp <= 0:
-            # timestamps must be positive
+    if log_data:
+        data = json.loads(log_data)
+        timestamp = data['t']
+        if timestamp >= options.timestamp:
+            # timestamps need to increase
             return -1
-        #print options.timestamp
-        line = line + str(options.timestamp) + ","
-    else:
-        return -1
-        
-    if options.employee_name and options.guest_name: # can't both exist
-        return -1
-    if options.employee_name == options.guest_name: # can't both not exist
-        return -1
-    if options.employee_name:
-        if options.employee_name.isalpha():
-            line += "E,"+options.employee_name+","
-        else:
-            return -1
-    if options.guest_name:
-        if options.guest_name.isalpha():
-            line += "G,"+options.guest_name+","
-        else:
-            return -1
-        
-    if options.arrival == options.departure: # mutually exclusive
-        return -1
-    if options.arrival:
-        line += "A,"
-    if options.departure:
-        line += "D,"
-    if options.room_id:
-        if options.room_id <= 0:
-            return -1
-        line += str(options.room_id)
-    else:
-        line += "-1" # main gallery
+        data['t'] = options.timestamp
 
-    return line
+        if options.guest_name:
+            database = data['g']
+            name = options.guest_name
+        else:
+            database = data['e']
+            name = options.employee_name
+
+
+        if options.departure:
+            if not name in database:
+                # no data on user
+                # a user not in our system can't leave
+                return -1
+            if options.room_id:
+                if database[name]['s'] == options.room_id:
+                    # sucessfully left the room
+                    # set status
+                    database[name]['s'] = GALLERY_LOCATION
+                    # show when that room was left
+                    database[name][str(options.room_id)].append(options.timestamp)
+                else:
+                    # can't leave a room not currently in
+                    return -1
+            else:
+                if database[name]['s'] == GALLERY_LOCATION:
+                    # successfully left the gallery
+                    # set status
+                    database[name]['s'] = OUT_OF_GALLERY_LOCATION
+                    # show when gallery was left
+                    database[name]['ga'].append(options.timestamp)
+                else:
+                    # either in a room or not in gallery, can't leave it
+                    return -1
+        else:
+            # this is an arrival
+            if not name in database:
+                # no data on user
+                if options.room_id:
+                    # can't enter a room first
+                    return -1
+                else:
+                    # successfully entered gallery for first time
+                    database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+            else:
+                if options.room_id:
+                    if database[name]['s'] == GALLERY_LOCATION:
+                        # successfully entered room
+                        # set status
+                        database[name]['s'] = options.room_id
+
+                        # show when room was entered
+                        if options.room_id in database[name]:
+                            # add to list to log when user in room
+                            database[name][str(options.room_id)].append(options.timestamp)
+                        else:
+                            # create new dictionary to log when user in room
+                            database[name][str(options.room_id)] = [options.timestamp]
+                    else:
+                        # user must be in the gallery to enter another room
+                        return -1
+                else:
+                    if database[name]['s'] != OUT_OF_GALLERY_LOCATION:
+                        # can't re enter gallery except from outside the gallery
+                        return -1
+                    else:
+                        # sucessfully re entered the gallery
+                        database[name]['s'] = GALLERY_LOCATION
+                        database[name]['ga'].append(options.timestamp)
+
+    else:
+        data = {}
+        data['t'] = options.timestamp
+        data['g'] = {}
+        data['e'] = {}
+
+        if options.departure:
+            # this is the first entry, has to be an arrival
+            return -1
+        if options.room_id:
+            # can't enter a room first
+            return -1
+        if options.guest_name:
+            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+        else:
+            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp]}
+
+    result = json.dumps(data)
+    return result
 
 def encrypt_to_file(file_path, data, options, writeString=False):
     f=open(file_path, 'w')
-    nonce = Random.new().read(AES.block_size)
+    nonce = os.urandom(AES.block_size)
     if writeString:
-        message = HARDCODED_STRING + "\n" + str(data)
+        message = HARDCODED_STRING + data
     else:
         message = str(data)
     # encrypted under the -K option passed in as a 256 hash
@@ -64,11 +124,9 @@ def encrypt_to_file(file_path, data, options, writeString=False):
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
 
-    print(message)
-
     # first line of file is unencrypted nonce, 2nd line is encrypted
     # first line of encrypted is the hardcoded string, rest is log data
-    f.write(nonce + "\n" + ciphertext)
+    f.write(nonce + ciphertext)
     f.close()
 
 
@@ -79,45 +137,54 @@ def handle_single_command(options):
         # we need the last argument to be the path to log
         return -1
 
-    if options.token == None:
-        # need to submit a token
+    if options.token == None and re.match('^[\w]+$', options.token) is not None:
+        # need to submit a token and be alpha numeric
         return -1
+
+    # TODO
+    # verify exactly one emp/guest
+    # verify alphabetical of emp/guest
+    # verify exactly one of arrive/depart
+    # room id is good
+    # verify no B option here
 
     if os.path.isfile(log_path):
         # appending to an existing log
         f=open(log_path, 'r')
-        lines = f.readlines()
+        raw = f.read()
         f.close()
-        nonce = lines[0].rstrip() # remove new line
-        ciphertext = ""
-        for line in lines[1:]:
-            ciphertext += line.rstrip()
-        #ciphertext = "".join(lines[1:])
+        nonce = raw[:AES.block_size]
+        ciphertext = raw[AES.block_size:]
 
         # decrypted under the -K option passed in as a 256 hash
         key = hashlib.sha256(options.token).digest()
         obj = AES.new(key, AES.MODE_CFB, nonce)
 
         message = obj.decrypt(ciphertext)
-        data = message.splitlines()
-        if data[0] != HARDCODED_STRING:
+        hardcode_attempt = message[:len(HARDCODED_STRING)]
+        
+
+        if hardcode_attempt != HARDCODED_STRING:
             # token was not correct if it didn't decrypt
             # to the hardcoded string properly
             return -2
 
-        result = handle_options(options, data[1:])
+        data = message[len(HARDCODED_STRING):]
+
+        # rest of data is json
+        result = handle_options(options, data)
         if result == -1:
             return -1
-        # data is new line separated
-        # each line has comma separated
-        to_encrypt = "\n".join(data[1:] + [result])
-        encrypt_to_file(log_path, to_encrypt, options, writeString=True)
+
+        # encrypt the json result
+        encrypt_to_file(log_path, result, options, writeString=True)
     else:
         # this is a new log
+        result = handle_options(options)
+        if result == -1:
+            return -1
+        encrypt_to_file(log_path, result, options, writeString=True)
 
-        data = handle_options(options)
-
-        encrypt_to_file(log_path, data, options, writeString=True)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-T", type=int, dest="timestamp")
@@ -127,8 +194,8 @@ def main():
     parser.add_argument("-A", dest="arrival", action='store_true')
     parser.add_argument("-L", dest="departure", action='store_true')
     parser.add_argument("-R", type=int, dest="room_id")
-    parser.add_argument("-B", dest="file")
-    parser.add_argument("log", help='string for log path')
+    parser.add_argument("-B", dest="batch", action='store_true')
+    parser.add_argument("log", help='string for log path or batch path')
 
     options = parser.parse_args()
 
