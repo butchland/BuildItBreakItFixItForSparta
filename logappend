@@ -3,6 +3,7 @@
 import argparse
 import sys
 import os.path
+import subprocess
 import hashlib
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -186,8 +187,15 @@ def handle_single_command(options):
         if result == -1:
             return -1
         encrypt_to_file(log_path, result, options, writeString=True)
-
+def handle_multiple_commands(options):
+    f = open(options.log, "r")
+    for line in f.readlines():
+        line = line.strip()
+        call = [sys.argv[0]] + line.split()
+        subprocess.call(call)
+    f.close()
 def main():
+    print sys.argv
     parser = argparse.ArgumentParser()
     parser.add_argument("-T", type=int, dest="timestamp")
     parser.add_argument("-K", dest="token")
@@ -200,10 +208,11 @@ def main():
     parser.add_argument("log", help='string for log path or batch path')
 
     options = parser.parse_args()
-
-    # TODO handle the -B option
-
-    result = handle_single_command(options)
+    result = -1
+    if options.batch:
+        result = handle_multiple_commands(options)
+    else:
+        result = handle_single_command(options)
     # try:
     #     result = handle_single_command(options)
     # except Exception, e:
