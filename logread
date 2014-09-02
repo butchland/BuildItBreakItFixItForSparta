@@ -208,7 +208,11 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            "TODO"
+            html = "<html><body><table>"
+            for employee in employees:
+                html += "<tr><th>" + employee + "</th></tr>"
+            html += "</table></body></html>"
+            sys.stdout.write(html)
         else:
             sys.stdout.write(",".join(employees))
 
@@ -238,7 +242,11 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            "TODO"
+            html = "<html><body><table>"
+            for employee in employees:
+                html += "<tr><th>" + employee + "</th></tr>"
+            html += "</table></body></html>"
+            sys.stdout.write(html)
         else:
             sys.stdout.write(",".join(employees))
 
