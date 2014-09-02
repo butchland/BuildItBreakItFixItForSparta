@@ -114,13 +114,13 @@ def handle_options(options, log_data=None):
     result = json.dumps(data)
     return result
 
-def encrypt_to_file(file_path, data, options, writeString=False):
+def encrypt_to_file(file_path, data, options):
     f=open(file_path, 'w')
     nonce = os.urandom(AES.block_size)
-    if writeString:
-        message = HARDCODED_STRING + data
-    else:
-        message = str(data)
+    # the hardcoded string checks the validity of the token
+    # the hash preserves integrety by being able to check it
+    # on decrypt.  Security ensured with encryption and this MAC
+    message = HARDCODED_STRING + hashlib.sha256(data).digest() + data
     # encrypted under the -K option passed in as a 256 hash
     key = hashlib.sha256(options.token).digest()
 
@@ -173,15 +173,21 @@ def handle_single_command(options):
         obj = AES.new(key, AES.MODE_CFB, nonce)
 
         message = obj.decrypt(ciphertext)
-        hardcode_attempt = message[:len(HARDCODED_STRING)]
-        
+        hardcode_attempt = message[:len(HARDCODED_STRING)]        
 
         if hardcode_attempt != HARDCODED_STRING:
             # token was not correct if it didn't decrypt
             # to the hardcoded string properly
             return -2
 
-        data = message[len(HARDCODED_STRING):]
+        # hsh is sha256 which is 32 string characters
+        hsh = message[len(HARDCODED_STRING):len(HARDCODED_STRING) + 32]
+        data = message[len(HARDCODED_STRING) + 32:]
+
+        if hsh != hashlib.sha256(data).digest():
+            # hsh was not correct, probably somebody
+            # mucked the data
+            return -2
 
         # rest of data is json
         result = handle_options(options, data)
@@ -189,13 +195,13 @@ def handle_single_command(options):
             return -1
 
         # encrypt the json result
-        encrypt_to_file(log_path, result, options, writeString=True)
+        encrypt_to_file(log_path, result, options)
     else:
         # this is a new log
         result = handle_options(options)
         if result == -1:
             return -1
-        encrypt_to_file(log_path, result, options, writeString=True)
+        encrypt_to_file(log_path, result, options)
 
     # success
     return 0
