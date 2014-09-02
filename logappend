@@ -144,12 +144,21 @@ def handle_single_command(options):
         # need to submit a token and be alpha numeric
         return -1
 
-    # TODO
     # verify exactly one emp/guest
+    if ((options.employee_name and options.guest_name) or (not options.employee_name and not options.guest_name)):
+        return -1
     # verify alphabetical of emp/guest
+    if (options.employee_name and not options.employee_name.isalpha()) or (options.guest_name and not options.guest_name.isalpha()):
+        return -1
+    
     # verify exactly one of arrive/depart
+    if ((options.arrival and options.departure) or (not options.arrival and not options.departure)):
+        return -1
     # room id is good
-    # verify no B option here
+    # verify no B option here -- also check in the handle_multiple_commands method
+    if options.batch:
+        # something went wrong with parsing
+        return -1
 
     if os.path.isfile(log_path):
         # appending to an existing log
@@ -195,10 +204,13 @@ def handle_multiple_commands(options):
     f = open(options.log, "r")
     for line in f.readlines():
         line = line.strip()
+        if "-B" in line:
+            # trying to call batch with batch, spec says this is bad
+            sys.stderr.write("cannot call batch within batch mode")
+            continue
         call = [sys.argv[0]] + line.split()
         subprocess.call(call)
     f.close()
-
     return 0
 
 def main():
