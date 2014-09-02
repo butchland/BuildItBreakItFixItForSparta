@@ -66,7 +66,7 @@ def handle_options(options, log_data=None):
                     # successfully entered gallery for first time
                     database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
             else:
-                if options.room_id == None:
+                if options.room_id != None:
                     if database[name]['s'] == GALLERY_LOCATION:
                         # successfully entered room
                         # set status
