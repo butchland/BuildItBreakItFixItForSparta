@@ -1,0 +1,4 @@
+<test type="correctness"><commands><command><args>-T 1 -K CHRZSCMI -G EDMOND -A LAPDEBRA</args><program>logappend</program></command><command><args>-T 2 -K CHRZSCMI -E PERCY -A LAPDEBRA</args><program>logappend</program></command><command><args>-T 3 -K CHRZSCMI -G EDMOND -A -R 18 LAPDEBRA</args><program>logappend</program></command><command><args>-T 4 -K CHRZSCMI -E PERCY -A -R 4 LAPDEBRA</args><program>logappend</program></command><command><args>-K CHRZSCMI -S LAPDEBRA</args><program>logread</program><output>PERCY
+EDMOND
+4: PERCY
+18: EDMOND</output><erroutput /><returncode>0</returncode></command></commands></test>
