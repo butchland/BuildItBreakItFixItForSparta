@@ -191,10 +191,50 @@ def handle_read(options):
         return
 
     if options.all_bound:
-        "in progress"
+        assert(len(options.lower_bounds) == 1)
+        assert(len(options.upper_bounds) == 1)
+        lower_bound = int(options.lower_bounds[0])
+        upper_bound = int(options.upper_bounds[0])
+
+        assert(lower_bound <= upper_bound)
+
+        employees = []
+
+        for employee in data['e']:
+            info = data['e'][employee]
+            if inbounds(info['ga'], lower_bound, upper_bound, data['t']):
+                employees.append(employee)
+
+        employees.sort()
+
+        if options.html:
+            "TODO"
+        else:
+            sys.stdout.write(",".join(employees))
+
 
     if options.exclusive_bound:
         "in progress"
+
+def inbounds(arr, lower_bound, upper_bound, current_time):
+    for idx, val in enumerate(arr):
+        if val >= lower_bound:
+            if idx % 2 == 0:
+                # target just entered the gallery at the first point in the range
+                # if target entered before the upper bound then success
+                return val <= upper_bound
+            else:
+                # target just left the gallery after the lower bound which means he was in the gallery
+                # at the point of the lower bound.  Success
+                return True
+
+    if len(arr) % 2 == 1:
+        # target is currently in the gallery
+        # target is in bounds if the current time is larger than lower bound
+        return current_time >= lower_bound
+    # target cannot be in gallery, he has no time signatures within the bounds
+    # and is currently outside the gallery
+    return False
 
 
 def main():
@@ -242,3 +282,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sys.exit(0)
