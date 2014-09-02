@@ -30,7 +30,6 @@ def handle_options(options, log_data=None):
             database = data['e']
             name = options.employee_name
 
-
         if options.departure:
             if not name in database:
                 # no data on user
@@ -67,7 +66,7 @@ def handle_options(options, log_data=None):
                     # successfully entered gallery for first time
                     database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': []}
             else:
-                if options.room_id:
+                if options.room_id == None:
                     if database[name]['s'] == GALLERY_LOCATION:
                         # successfully entered room
                         # set status
@@ -99,6 +98,7 @@ def handle_options(options, log_data=None):
         data['t'] = options.timestamp
         data['g'] = {}
         data['e'] = {}
+
 
         if options.departure:
             # this is the first entry, has to be an arrival
@@ -199,8 +199,9 @@ def handle_multiple_commands(options):
         subprocess.call(call)
     f.close()
 
+    return 0
+
 def main():
-    print sys.argv
     parser = argparse.ArgumentParser()
     parser.add_argument("-T", type=int, dest="timestamp")
     parser.add_argument("-K", dest="token")
