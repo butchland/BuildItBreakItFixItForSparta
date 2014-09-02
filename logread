@@ -20,7 +20,7 @@ def handle_read(options):
         # we need the last argument to be the path to log
         return -1
 
-    if options.token == None and re.match('^[\w]+$', options.token) is not None:
+    if options.token == None or re.match('^[\w]+$', options.token) is None:
         # need to submit a token and be alpha numeric
         return -1
 
@@ -143,18 +143,18 @@ def handle_read(options):
         return 0
 
     if options.total_time:
-        assert(options.html == None)
+        assert(options.html == False)
         if options.guest_names:
             assert(options.employee_names == None)
             assert(len(options.guest_names) == 1)
 
-            if options.guest_names[0] in data['g']:
+            if options.guest_names[0] not in data['g']:
                 datalog = data['g'][options.guest_names[0]]
             else:
                 return 0 # print nothing
         else:
             assert(len(options.employee_names) == 1)
-            if options.employee_names[0] in data['e'][options.employee_names[0]]:
+            if options.employee_names[0] not in data['e'][options.employee_names[0]]:
                 datalog = data['e'][options.employee_names[0]]
             else:
                 return 0 # print nothing
@@ -172,7 +172,7 @@ def handle_read(options):
             upper = data['t'] # current time
             time += (upper - lower)
 
-        sys.stdout.write(time)
+        sys.stdout.write(str(time))
 
         # successful print total time in gallery
         return 0

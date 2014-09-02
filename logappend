@@ -140,7 +140,7 @@ def handle_single_command(options):
         # we need the last argument to be the path to log
         return -1
 
-    if options.token == None and re.match('^[\w]+$', options.token) is not None:
+    if options.token == None or re.match('^[\w]+$', options.token) is None:
         # need to submit a token and be alpha numeric
         return -1
 
