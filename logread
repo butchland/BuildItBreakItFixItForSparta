@@ -58,6 +58,9 @@ def handle_read(options):
             info = data['g'][guest]
             guests.append(guest)
             room = info['s']
+            if room == GALLERY_LOCATION or room == OUT_OF_GALLERY_LOCATION:
+                # don't include ppl in gallery or outside
+                continue
             if room in room_info:
                 room_info[room].append(guest)
             else:
@@ -66,6 +69,9 @@ def handle_read(options):
             info = data['e'][employee]
             employees.append(employee)
             room = info['s']
+            if room == GALLERY_LOCATION or room == OUT_OF_GALLERY_LOCATION:
+                # don't include ppl in gallery or outside
+                continue
             if room in room_info:
                 room_info[room].append(employee)
             else:
@@ -74,17 +80,25 @@ def handle_read(options):
         guests.sort()
         employees.sort()
 
-        result = [",".join(guests), ",".join(employees)]
+        if options.html:
+            "damn"
 
-        keys = room_info.keys()
-        keys.sort()
+        else:
 
-        for room in keys:
-            values = room_info[room]
-            values.sort()
-            result.append(str(room) + ': ' + ",".join(values))
+            result = [",".join(employees), ",".join(guests)]
 
-        print("\n".join(result))
+            keys = room_info.keys()
+            keys.sort()
+
+            for room in keys:
+                values = room_info[room]
+                values.sort()
+                result.append(str(room) + ': ' + ",".join(values))
+
+            sys.stdout.write("\n".join(result))
+
+        # success printed current state
+        return
 
     if options.rooms_entered:
         if options.guest_names:
