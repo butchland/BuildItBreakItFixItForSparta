@@ -59,7 +59,7 @@ def handle_options(options, log_data=None):
             # this is an arrival
             if not name in database:
                 # no data on user
-                if options.room_id == None:
+                if options.room_id != None:
                     # can't enter a room first
                     return -1
                 else:
