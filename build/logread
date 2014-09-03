@@ -100,7 +100,7 @@ def handle_read(options):
 
         if options.html:
             html = "<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr>"
-            html += "<td>" + ",".join(employees) + "</td><td>" + ",".join(guests) + "</td>"
+            html += "<td>%s</td><td>%s</td>" % (",".join(employees), ",".join(guests))
             html += "</tr></table>"
 
             html += "<table><tr><th>Room ID</th><th>Occupants</th></tr>"
@@ -108,7 +108,7 @@ def handle_read(options):
             for room in keys:
                 values = room_info[room]
                 values.sort()
-                html += "<tr><td>" + str(room) + "</td><td>" + ",".join(values) + "</td></tr>"
+                html += "<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(values))
 
             html += "</table></body></html>"
             sys.stdout.write(html)
@@ -140,7 +140,7 @@ def handle_read(options):
             html = "<html><body><table><tr><th>Rooms</th></tr>"
 
             for room in datalog['r']:
-                html += "<tr><td>" + str(room) + "</td></tr>"
+                html += "<tr><td>%s</td></tr>" % room
 
             html += "</table></body></html>"
 
@@ -271,7 +271,7 @@ def handle_read(options):
         if options.html:
             html = "<html><body><table><tr><th>Rooms</th></tr>"
             for room in rooms:
-                html += "<tr><td>" + str(room) + "</th></td>"
+                html += "<tr><td>%s</th></td>" % (room)
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
@@ -303,7 +303,7 @@ def handle_read(options):
         if options.html:
             html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
-                html += "<tr><td>%s</td></tr>" % "hi"
+                html += "<tr><td>%s</td></tr>" % (employee)
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
@@ -343,7 +343,7 @@ def handle_read(options):
         if options.html:
             html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
-                html += "<tr><td>" + employee + "</td></tr>"
+                html += "<tr><td>%s</td></tr>" % (employee)
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
