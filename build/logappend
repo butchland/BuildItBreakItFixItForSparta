@@ -103,7 +103,7 @@ def handle_options(options, log_data=None):
         if options.departure:
             # this is the first entry, has to be an arrival
             return -1
-        if options.room_id:
+        if options.room_id != None:
             # can't enter a room first
             return -1
         if options.guest_name:
