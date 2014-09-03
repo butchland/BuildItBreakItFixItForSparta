@@ -6,9 +6,7 @@ import os.path
 import subprocess
 import hashlib
 from Crypto.Cipher import AES
-from Crypto import Random
 import json
-import re
 
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 GALLERY_LOCATION = -1
@@ -139,8 +137,7 @@ def handle_single_command(options):
     if log_path == None:
         # we need the last argument to be the path to log
         return -1
-
-    if options.token == None or re.match('^[\w]+$', options.token) is None:
+    if options.token == None or not options.token.isalnum():
         # need to submit a token and be alpha numeric
         return -1
 
