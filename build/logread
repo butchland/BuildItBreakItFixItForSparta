@@ -292,9 +292,9 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if len(info['ga']) % 2 == 1:
+            #if len(info['ga']) % 2 == 1:
                 # still in the gallery, append the current time as final upper bound
-                info['ga'].append(data['t'])
+            #    info['ga'].append(data['t'])
             if inbounds(info['ga'], lower_bound, upper_bound):
                 employees.append(employee)
 
@@ -331,9 +331,9 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if len(info['ga']) % 2 == 1:
+            #if len(info['ga']) % 2 == 1:
                 # still in the gallery, append the current time as final upper bound
-                info['ga'].append(data['t'])
+            #    info['ga'].append(data['t'])
             if inbounds(info['ga'], lower_bound, upper_bound):
                 if not inbounds(info['ga'], lower_exclude_bound, upper_exclude_bound):
                     employees.append(employee)
@@ -364,7 +364,9 @@ def inbounds(arr, lower_bound, upper_bound):
                 # target just left the gallery after the lower bound which means he was in the gallery
                 # at the point of the lower bound.  Success
                 return True
-
+    if len(arr) % 2 == 1:
+        # target is current in the gallery, bound is in the future so target is inbounds
+        return True
     # target cannot be in gallery, he has no time signatures within the bounds
     return False
 
