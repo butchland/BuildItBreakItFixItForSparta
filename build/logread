@@ -303,7 +303,7 @@ def handle_read(options):
         if options.html:
             html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
-                html += "<tr><td>" + employee + "</td></tr>"
+                html += "<tr><td>%s</td></tr>" % "hi"
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
