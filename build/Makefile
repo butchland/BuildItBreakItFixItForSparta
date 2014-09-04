@@ -79,7 +79,7 @@ testcustomallbound:
 	./logread -K secret -A -L 17 -U 20 testcustomallbound > tmp18
 	diff tmp18 tmp15
 
-	./logread -K secret -A -L 50 -U 51 testcustomallbound > tmp19
+	-./logread -K secret -A -L 50 -U 51 testcustomallbound > tmp19
 	echo -ne "" > tmp20
 	diff tmp19 tmp20
 
