@@ -230,15 +230,20 @@ def main():
     parser.add_argument("log", help='string for log path or batch path')
 
     options = parser.parse_args()
-    result = -1
     if options.batch:
         try:
             result = handle_multiple_commands(options)
         except:
             # batch should always return 0
+            # this could be a file read error or something
             sys.exit(0)
     else:
-        result = handle_single_command(options)
+        try:
+            result = handle_single_command(options)
+        except:
+            # logread exited due to an error condition
+            # should print invalid and return -1
+            result = -1
 
     if result == -2:
         sys.stderr.write("security error")

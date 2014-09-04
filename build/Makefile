@@ -3,7 +3,7 @@ SHELL = bash
 dummy:
 	echo "no make necessary"
 testclean: test clean
-test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail
 
 
 testcustomtotaltime:
@@ -152,8 +152,8 @@ testcustomnegativeroom:
 testcustombatchfail:
 	echo -ne "-K secret -T 0 -A -E John testcustombatchfail\n-K secret -T 1 -A -R 0 -E John testcustombatchfail\n-K secret -T 2 -A -R 0 -G James testcustombatchfail\n-K secret -T 3 -A -G James testcustombatchfail" > testcustombatchfailfile
 	./logappend -B testcustombatchfailfile
-	./logread -K secret -S testcustombatch > tmp34
-	echo -ne "John\nJames\n0: James,John" > tmp35
+	./logread -K secret -S testcustombatchfail > tmp34
+	echo -ne "John\nJames\n0: John" > tmp35
 	diff tmp34 tmp35
 
 clean:
