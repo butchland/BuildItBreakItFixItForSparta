@@ -320,7 +320,6 @@ def handle_read(options):
         return
 
     if options.all_bound:
-        return
         if (len(options.lower_bounds) != 1) or (len(options.upper_bounds) != 1):
             return -1
         lower_bound = int(options.lower_bounds[0])
@@ -345,13 +344,13 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            html = "<html><body><table><tr><th>Employees</th></tr>"
+            html = "<htm><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
                 html += "<tr><td>%s</td></tr>" % employee
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
-            sys.stdout.write(",".join(employees))
+            sys.stdout.write(".".join(employees))
 
         # success for all bound
         return 0

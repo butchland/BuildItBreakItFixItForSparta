@@ -7,13 +7,13 @@ test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity t
 
 
 testcustomtotaltime:
-	./logappend -T 1 -K secret -A -E Fred testcustomtotaltime
-	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomtotaltime
-	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomtotaltime
-	./logappend -T 6 -K secret -L -E Fred testcustomtotaltime
-	./logappend -T 7 -K secret -A -E Fred testcustomtotaltime
-	./logappend -T 11 -K secret -L -E Fred testcustomtotaltime
-	./logread -K secret -T -E Fred testcustomtotaltime > tmp
+	./logappend -T 1 -K secret -A -E Fred ~/testcustomtotal_time
+	./logappend -T 3 -K secret -A -E Fred -R 1 ~/testcustomtotal_time
+	./logappend -T 5 -K secret -L -E Fred -R 1 ~/testcustomtotal_time
+	./logappend -T 6 -K secret -L -E Fred ~/testcustomtotal_time
+	./logappend -T 7 -K secret -A -E Fred ~/testcustomtotal_time
+	./logappend -T 11 -K secret -L -E Fred ~/testcustomtotal_time
+	./logread -K secret -T -E Fred ~/testcustomtotal_time > tmp
 	echo -ne "9" > tmp1
 	diff tmp tmp1
 
