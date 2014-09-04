@@ -7,6 +7,7 @@ import subprocess
 import hashlib
 from Crypto.Cipher import AES
 import json
+import re
 
 HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
 GALLERY_LOCATION = -1
@@ -135,7 +136,7 @@ def encrypt_to_file(file_path, data, options, key):
 def handle_single_command(options):
     log_path = options.log
 
-    if log_path == None:
+    if (log_path == None) or (re.match('^[\w_]+$', log_path) == None):
         # we need the last argument to be the path to log
         return -1
     if options.token == None or not options.token.isalnum():
