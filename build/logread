@@ -127,8 +127,8 @@ def handle_read(options):
 
     if options.rooms_entered:
         if options.guest_names:
-            assert(options.employee_names == None)
-            assert(len(options.guest_names) == 1)
+            return -1 if options.employee_names != None
+            return -1 if len(options.guest_names) != 1
             try:
                 datalog = data['g'][options.guest_names[0]]
             except KeyError:
@@ -139,7 +139,7 @@ def handle_read(options):
                 return 0
 
         else:
-            assert(len(options.employee_names) == 1)
+            return -1 if len(options.employee_names) != 1
             try:
                 datalog = data['e'][options.employee_names[0]]
             except KeyError:
@@ -165,7 +165,7 @@ def handle_read(options):
         return 0
 
     if options.total_time:
-        assert(options.html == False)
+        return -1 if options.html
         if options.guest_names:
             assert(options.employee_names == None)
             assert(len(options.guest_names) == 1)
@@ -314,12 +314,12 @@ def handle_read(options):
         return
 
     if options.all_bound:
-        assert(len(options.lower_bounds) == 1)
-        assert(len(options.upper_bounds) == 1)
+        return -1 if len(options.lower_bounds) != 1
+        return -1 if len(options.upper_bounds) != 1
         lower_bound = int(options.lower_bounds[0])
         upper_bound = int(options.upper_bounds[0])
 
-        assert(lower_bound <= upper_bound)
+        return -1 if lower_bound > upper_bound
 
         employees = []
 
@@ -343,22 +343,22 @@ def handle_read(options):
             sys.stdout.write(",".join(employees))
 
         # success for all bound
-        return
+        return 0
 
 
     if options.exclusive_bound:
-        assert(len(options.lower_bounds) == 2)
-        assert(len(options.upper_bounds) == 2)
+        return -1 if len(options.lower_bounds) != 2
+        return -1 if len(options.upper_bounds) != 2
 
         lower_bound = int(options.lower_bounds[0])
         upper_bound = int(options.upper_bounds[0])
 
-        assert(lower_bound <= upper_bound)
+        return -1 if lower_bound > upper_bound
 
         lower_exclude_bound = int(options.lower_bounds[1])
         upper_exclude_bound = int(options.upper_bounds[1])
 
-        assert(lower_exclude_bound <= upper_exclude_bound)
+        return -1 if lower_exclude_bound > upper_exclude_bound
 
         employees = []
 
@@ -383,7 +383,7 @@ def handle_read(options):
             sys.stdout.write(",".join(employees))
 
         # success for exclusive bound
-        return
+        return 0
 
 
 def inbounds(arr, lower_bound, upper_bound):
