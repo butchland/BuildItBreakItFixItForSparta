@@ -384,15 +384,12 @@ def main():
     parser.add_argument("-U", dest="upper_bounds", action='append')
     parser.add_argument('log', help='string for log path')
 
-
-
     args = parser.parse_args()
     invocation = [args.current_state, args.rooms_entered, args.total_time, args.matching_rooms, args.all_bound, args.exclusive_bound]
     if sum(invocation) != 1:
         # can't specify more than one option
         sys.stdout.write('invalid')
         sys.exit(-1)
-
 
     result = handle_read(args)
 
