@@ -169,8 +169,8 @@ def handle_read(options):
         if options.html:
             return -1
         if options.guest_names:
-            assert(options.employee_names == None)
-            assert(len(options.guest_names) == 1)
+            if (options.employee_names != None) or (len(options.guest_names) != 1):
+                return -1
 
             try:
                 datalog = data['g'][options.guest_names[0]]
@@ -178,7 +178,8 @@ def handle_read(options):
                 # no data in the database about that person, print out nothing
                 return 0
         else:
-            assert(len(options.employee_names) == 1)
+            if len(options.employee_names) != 1:
+                return -1
 
             try:
                 datalog = data['e'][options.employee_names[0]]
