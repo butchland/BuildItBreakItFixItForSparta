@@ -344,13 +344,13 @@ def handle_read(options):
         employees.sort()
 
         if options.html:
-            html = "<htm><body><table><tr><th>Employees</th></tr>"
+            html = "<html><body><table><tr><th>Employees</th></tr>"
             for employee in employees:
                 html += "<tr><td>%s</td></tr>" % employee
             html += "</table></body></html>"
             sys.stdout.write(html)
         else:
-            sys.stdout.write(".".join(employees))
+            sys.stdout.write(",".join(employees))
 
         # success for all bound
         return 0
