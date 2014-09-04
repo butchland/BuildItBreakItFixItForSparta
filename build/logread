@@ -437,7 +437,7 @@ def main():
         sys.stderr.write("integrity violation")
         sys.exit(-1)
     if result == -1:
-        #sys.stdout.write('invalid')
+        sys.stdout.write('invalid')
         sys.exit(-1)
 
 if __name__ == "__main__":
