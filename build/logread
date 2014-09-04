@@ -71,9 +71,9 @@ def handle_read(options):
             if room == GALLERY_LOCATION:
                 # don't include ppl in gallery in room analysis
                 continue
-            if room in room_info:
+            try:
                 room_info[room].append(guest)
-            else:
+            except KeyError:
                 room_info[room] = [guest]
         for employee in data['e']:
             info = data['e'][employee]
@@ -85,9 +85,9 @@ def handle_read(options):
             if room == GALLERY_LOCATION:
                 # don't include ppl in gallery in room analysis
                 continue
-            if room in room_info:
+            try:
                 room_info[room].append(employee)
-            else:
+            except KeyError:
                 room_info[room] = [employee]
 
         guests.sort()

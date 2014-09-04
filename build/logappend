@@ -73,10 +73,10 @@ def handle_options(options, log_data=None):
                         database[name]['r'].append(str(options.room_id))
 
                         # show when room was entered
-                        if options.room_id in database[name]:
+                        try:
                             # add to list to log when user in room
                             database[name][str(options.room_id)].append(options.timestamp)
-                        else:
+                        except KeyError:
                             # create new dictionary to log when user in room
                             database[name][str(options.room_id)] = [options.timestamp]
                     else:
@@ -112,15 +112,13 @@ def handle_options(options, log_data=None):
     result = json.dumps(data, separators=(',',':'))
     return result
 
-def encrypt_to_file(file_path, data, options):
+def encrypt_to_file(file_path, data, options, key):
     f=open(file_path, 'w')
     nonce = os.urandom(AES.block_size)
     # the hardcoded string checks the validity of the token
     # the hash preserves integrety by being able to check it
     # on decrypt.  Security ensured with encryption and this MAC
     message = HARDCODED_STRING + hashlib.sha256(data).digest() + data
-    # encrypted under the -K option passed in as a 256 hash
-    key = hashlib.sha256(options.token).digest()
 
     obj = AES.new(key, AES.MODE_CFB, nonce)
     ciphertext = obj.encrypt(message)
@@ -157,6 +155,9 @@ def handle_single_command(options):
         # something went wrong with parsing
         return -1
 
+    # encrypted under the -K option passed in as a 256 hash
+    key = hashlib.sha256(options.token).digest()
+
     if os.path.isfile(log_path):
         # appending to an existing log
         f=open(log_path, 'r')
@@ -165,8 +166,6 @@ def handle_single_command(options):
         nonce = raw[:AES.block_size]
         ciphertext = raw[AES.block_size:]
 
-        # decrypted under the -K option passed in as a 256 hash
-        key = hashlib.sha256(options.token).digest()
         obj = AES.new(key, AES.MODE_CFB, nonce)
 
         message = obj.decrypt(ciphertext)
@@ -192,13 +191,13 @@ def handle_single_command(options):
             return -1
 
         # encrypt the json result
-        encrypt_to_file(log_path, result, options)
+        encrypt_to_file(log_path, result, options, key)
     else:
         # this is a new log
         result = handle_options(options)
         if result == -1:
             return -1
-        encrypt_to_file(log_path, result, options)
+        encrypt_to_file(log_path, result, options, key)
 
     # success
     return 0
