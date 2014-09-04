@@ -149,7 +149,9 @@ def handle_single_command(options):
     # verify exactly one of arrive/depart
     if ((options.arrival and options.departure) or (not options.arrival and not options.departure)):
         return -1
-    # room id is good
+    # verify room id is positive
+    if (options.room_id and options.room_id < 0):
+        return -1
     # verify no B option here -- also check in the handle_multiple_commands method
     if options.batch:
         # something went wrong with parsing
@@ -230,7 +232,11 @@ def main():
     options = parser.parse_args()
     result = -1
     if options.batch:
-        result = handle_multiple_commands(options)
+        try:
+            result = handle_multiple_commands(options)
+        except:
+            # batch should always return 0
+            sys.exit(0)
     else:
         result = handle_single_command(options)
 

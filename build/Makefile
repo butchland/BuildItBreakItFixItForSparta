@@ -138,5 +138,23 @@ testcustomhtml:
 	echo -ne "<html><body><table><tr><th>Rooms</th></tr><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr><tr><td>1</td></tr></table></body></html>" > tmp31
 	diff tmp30 tmp31
 
+testcustomnegativeroom:
+	./logappend -T 1 -K secret -A -E Fred testcustomnegativeroom
+	-./logappend -T 3 -K secret -A -E Fred -R -1 testcustomnegativeroom
+	-./logappend -T 5 -K secret -L -E Fred -R -1 testcustomnegativeroom
+	./logappend -T 6 -K secret -L -E Fred testcustomnegativeroom
+	./logappend -T 7 -K secret -A -E Fred testcustomnegativeroom
+	./logappend -T 11 -K secret -L -E Fred testcustomnegativeroom
+	./logread -K secret -R -E Fred testcustomnegativeroom > tmp32
+	echo -ne "" > tmp33
+	diff tmp32 tmp33
+
+testcustombatchfail:
+	echo -ne "-K secret -T 0 -A -E John testcustombatchfail\n-K secret -T 1 -A -R 0 -E John testcustombatchfail\n-K secret -T 2 -A -R 0 -G James testcustombatchfail\n-K secret -T 3 -A -G James testcustombatchfail" > testcustombatchfailfile
+	./logappend -B testcustombatchfailfile
+	./logread -K secret -S testcustombatch > tmp34
+	echo -ne "John\nJames\n0: James,John" > tmp35
+	diff tmp34 tmp35
+
 clean:
 	rm testcustom* tmp*
