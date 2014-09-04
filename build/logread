@@ -129,10 +129,25 @@ def handle_read(options):
         if options.guest_names:
             assert(options.employee_names == None)
             assert(len(options.guest_names) == 1)
-            datalog = data['g'][options.guest_names[0]]
+            try:
+                datalog = data['g'][options.guest_names[0]]
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about that person, print out empty HTML or nothing
+                return 0
+
         else:
             assert(len(options.employee_names) == 1)
-            datalog = data['e'][options.employee_names[0]]
+            try:
+                datalog = data['e'][options.employee_names[0]]
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about that person, print out empty HTML or nothing
+                return 0
 
         if options.html:
             html = "<html><body><table><tr><th>Rooms</th></tr>"
@@ -155,16 +170,19 @@ def handle_read(options):
             assert(options.employee_names == None)
             assert(len(options.guest_names) == 1)
 
-            if options.guest_names[0] not in data['g']:
+            try:
                 datalog = data['g'][options.guest_names[0]]
-            else:
-                return 0 # print nothing
+            except KeyError:
+                # no data in the database about that person, print out nothing
+                return 0
         else:
             assert(len(options.employee_names) == 1)
-            if options.employee_names[0] not in data['e'][options.employee_names[0]]:
+
+            try:
                 datalog = data['e'][options.employee_names[0]]
-            else:
-                return 0 # print nothing
+            except KeyError:
+                # no data in the database about that person, print out nothing
+                return 0
 
         arr = datalog['ga'] # look at ranges in the gallery
         time = 0
@@ -190,20 +208,37 @@ def handle_read(options):
         # to be in the same room as
         if options.employee_names:
             # use first employee as target
-            target = data['e'][options.employee_names[0]]
-            options.employee_names.pop(0) # don't need that value anymore
-            for employee in options.employee_names:
-                other_targets.append(data['e'][employee])
+            try:
+                target = data['e'][options.employee_names[0]]
+                options.employee_names.pop(0) # don't need that value anymore
+                for employee in options.employee_names:
+                    other_targets.append(data['e'][employee])
 
-            if options.guest_names:
+                if options.guest_names:
+                    for guest in options.guest_names:
+                        other_targets.append(data['g'][guest])
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about one of the people, print out empty HTML or nothing
+                return 0
+
+
+        else:
+            try:
+                # theres no employees, use the first guest as target
+                target = data['g'][options.guest_names[0]]
+                options.guest_names.pop(0) # don't need that value anymore
+
                 for guest in options.guest_names:
                     other_targets.append(data['g'][guest])
-        else:
-            # theres no employees, use the first guest as target
-            target = data['g'][options.guest_names[0]]
-            options.guest_names.pop(0) # don't need that value anymore
-            for guest in options.guest_names:
-                other_targets.append(data['g'][guest])
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about one of the people, print out empty HTML or nothing
+                return 0
 
         rooms = []
         for room in target:
