@@ -221,44 +221,39 @@ def handle_multiple_commands(options):
     f.close()
     return 0
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-T", type=int, dest="timestamp")
-    parser.add_argument("-K", dest="token")
-    parser.add_argument("-E", dest="employee_name")
-    parser.add_argument("-G", dest="guest_name")
-    parser.add_argument("-A", dest="arrival", action='store_true')
-    parser.add_argument("-L", dest="departure", action='store_true')
-    parser.add_argument("-R", type=int, dest="room_id")
-    parser.add_argument("-B", dest="batch", action='store_true')
-    parser.add_argument("log", help='string for log path or batch path')
+parser = argparse.ArgumentParser()
+parser.add_argument("-T", type=int, dest="timestamp")
+parser.add_argument("-K", dest="token")
+parser.add_argument("-E", dest="employee_name")
+parser.add_argument("-G", dest="guest_name")
+parser.add_argument("-A", dest="arrival", action='store_true')
+parser.add_argument("-L", dest="departure", action='store_true')
+parser.add_argument("-R", type=int, dest="room_id")
+parser.add_argument("-B", dest="batch", action='store_true')
+parser.add_argument("log", help='string for log path or batch path')
 
-    options = parser.parse_args()
-    if options.batch:
-        try:
-            result = handle_multiple_commands(options)
-        except:
-            # batch should always return 0
-            # this could be a file read error or something
-            sys.exit(0)
-    else:
-        try:
-            result = handle_single_command(options)
-        except:
-            # logread exited due to an error condition
-            # should print invalid and return -1
-            result = -1
+options = parser.parse_args()
+if options.batch:
+    try:
+        result = handle_multiple_commands(options)
+    except:
+        # batch should always return 0
+        # this could be a file read error or something
+        sys.exit(0)
+else:
+    try:
+        result = handle_single_command(options)
+    except:
+        # logread exited due to an error condition
+        # should print invalid and return -1
+        result = -1
 
-    if result == -2:
-        sys.stderr.write("security error")
-        sys.exit(-1)
-    if result == -1:
-        sys.stdout.write('invalid')
-        sys.exit(-1)
+if result == -2:
+    sys.stderr.write("security error")
+    sys.exit(-1)
+if result == -1:
+    sys.stdout.write('invalid')
+    sys.exit(-1)
 
-
-
-if __name__ == "__main__":
-    main()
-    sys.exit(0)
+sys.exit(0)
 
