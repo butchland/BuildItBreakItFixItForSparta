@@ -190,7 +190,7 @@ def handle_read(options):
                 # no data in the database about that person, print out nothing
                 return 0
 
-        arr = datalog['ga'] # look at ranges in the gallery
+        arr = datalog['a'] # look at ranges in the gallery
         time = 0
 
         for i in range(len(arr) / 2):
@@ -249,7 +249,7 @@ def handle_read(options):
         rooms = []
         for room in target:
             failed = False
-            if room == 'ga' or room == 'r' or room == 's':
+            if room == 'a' or room == 'r' or room == 's':
                 # not rooms, just data
                 continue
             target_list = target[room]
@@ -332,10 +332,10 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if len(info['ga']) % 2 == 1:
+            if len(info['a']) % 2 == 1:
                 # still in the gallery, append the current time as final upper bound
-                info['ga'].append(data['t'])
-            if inbounds(info['ga'], lower_bound, upper_bound):
+                info['a'].append(data['t'])
+            if inbounds(info['a'], lower_bound, upper_bound):
                 employees.append(employee)
 
         if len(employees) == 0:
@@ -376,11 +376,11 @@ def handle_read(options):
 
         for employee in data['e']:
             info = data['e'][employee]
-            if len(info['ga']) % 2 == 1:
+            if len(info['a']) % 2 == 1:
                 # still in the gallery, append the current time as final upper bound
-                info['ga'].append(data['t'])
-            if inbounds(info['ga'], lower_bound, upper_bound):
-                if not inbounds(info['ga'], lower_exclude_bound, upper_exclude_bound):
+                info['a'].append(data['t'])
+            if inbounds(info['a'], lower_bound, upper_bound):
+                if not inbounds(info['a'], lower_exclude_bound, upper_exclude_bound):
                     employees.append(employee)
 
         if len(employees) == 0:

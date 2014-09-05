@@ -50,7 +50,7 @@ def handle_options(options, log_data=None):
                     # set status
                     database[name]['s'] = OUT_OF_GALLERY_LOCATION
                     # show when gallery was left
-                    database[name]['ga'].append(options.timestamp)
+                    database[name]['a'].append(options.timestamp)
                 else:
                     # either in a room or not in gallery, can't leave it
                     return -1
@@ -63,7 +63,7 @@ def handle_options(options, log_data=None):
                     return -1
                 else:
                     # successfully entered gallery for first time
-                    database[name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': ''}
+                    database[name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
             else:
                 if options.room_id != None:
                     if database[name]['s'] == GALLERY_LOCATION:
@@ -93,7 +93,7 @@ def handle_options(options, log_data=None):
                     else:
                         # sucessfully re entered the gallery
                         database[name]['s'] = GALLERY_LOCATION
-                        database[name]['ga'].append(options.timestamp)
+                        database[name]['a'].append(options.timestamp)
 
     else:
         data = {}
@@ -109,9 +109,9 @@ def handle_options(options, log_data=None):
             # can't enter a room first
             return -1
         if options.guest_name:
-            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': ''}
+            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
         else:
-            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'ga': [options.timestamp], 'r': ''}
+            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
 
     result = json.dumps(data, separators=(',',':'))
     return result
