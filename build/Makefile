@@ -160,4 +160,4 @@ testcustombatchfail:
 	diff tmp34 tmp35
 
 clean:
-	rm testcustom* tmp*
+	rm testcustom* tmp* logappend.c logread.c
