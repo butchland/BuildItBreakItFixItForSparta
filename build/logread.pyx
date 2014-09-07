@@ -115,13 +115,13 @@ def handle_read(options):
         else:
 
             result = [",".join(employees), ",".join(guests)]
+            sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
 
             for room in keys:
                 values = room_info[room]
                 values.sort()
-                result.append(str(room) + ': ' + ",".join(values))
+                sys.stdout.write("\n%s: %s" % (room, ",".join(values)))
 
-            sys.stdout.write("\n".join(result))
 
         # success printed current state
         return 0
