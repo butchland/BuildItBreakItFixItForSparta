@@ -21,7 +21,8 @@ def handle_read(options):
         # we need the last argument to be the path to log
         return -1
 
-    if options.token == None or not options.token.isalnum():
+    token = options.token
+    if token == None or not token.isalnum():
         # need to submit a token and be alpha numeric
         return -1
 
@@ -32,17 +33,14 @@ def handle_read(options):
     f=open(log_path, 'r')
     raw = f.read()
     f.close()
-    nonce = raw[:AES.block_size]
-    ciphertext = raw[AES.block_size:]
 
     # decrypted under the -K option passed in as a 256 hash
-    key = hashlib.sha256(options.token).digest()
-    obj = AES.new(key, AES.MODE_CFB, nonce)
+    key = hashlib.sha256(token).digest()
+    obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
 
-    message = obj.decrypt(ciphertext)
-    hardcode_attempt = message[:HARDCODED_STRING_LENGTH]
+    message = obj.decrypt(raw[AES.block_size:])
 
-    if hardcode_attempt != HARDCODED_STRING:
+    if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
         # token was not correct if it didn't decrypt
         # to the hardcoded string properly
         return -2

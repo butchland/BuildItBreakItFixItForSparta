@@ -15,129 +15,35 @@ HARDCODED_STRING_LENGTH_PLUS_32 = HARDCODED_STRING_LENGTH + 32
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 
-def handle_options(options, log_data):
-    if log_data:
-        data = json.loads(log_data)
-        timestamp = data['t']
-        if timestamp >= options.timestamp:
-            # timestamps need to increase
-            return -1
-        data['t'] = options.timestamp
-
-        if options.guest_name:
-            database = data['g']
-            name = options.guest_name
-        else:
-            database = data['e']
-            name = options.employee_name
-
-        if options.departure:
-            if not name in database:
-                # no data on user
-                # a user not in our system can't leave
-                return -1
-            if options.room_id != None:
-                if database[name]['s'] == options.room_id:
-                    # sucessfully left the room
-                    # set status
-                    database[name]['s'] = GALLERY_LOCATION
-                    # show when that room was left
-                    database[name][str(options.room_id)].append(options.timestamp)
-                else:
-                    # can't leave a room not currently in
-                    return -1
-            else:
-                if database[name]['s'] == GALLERY_LOCATION:
-                    # successfully left the gallery
-                    # set status
-                    database[name]['s'] = OUT_OF_GALLERY_LOCATION
-                    # show when gallery was left
-                    database[name]['a'].append(options.timestamp)
-                else:
-                    # either in a room or not in gallery, can't leave it
-                    return -1
-        else:
-            # this is an arrival
-            if not name in database:
-                # no data on user
-                if options.room_id != None:
-                    # can't enter a room first
-                    return -1
-                else:
-                    # successfully entered gallery for first time
-                    database[name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
-            else:
-                if options.room_id != None:
-                    if database[name]['s'] == GALLERY_LOCATION:
-                        # successfully entered room
-                        # set status
-                        database[name]['s'] = options.room_id
-                        # set new room got to
-                        if database[name]['r'] == '':
-                            database[name]['r'] = str(options.room_id)
-                        else:
-                            database[name]['r'] += ',%s' % options.room_id
-
-                        # show when room was entered
-                        try:
-                            # add to list to log when user in room
-                            database[name][options.room_id].append(options.timestamp)
-                        except KeyError:
-                            # create new dictionary to log when user in room
-                            database[name][options.room_id] = [options.timestamp]
-                    else:
-                        # user must be in the gallery to enter another room
-                        return -1
-                else:
-                    if database[name]['s'] != OUT_OF_GALLERY_LOCATION:
-                        # can't re enter gallery except from outside the gallery
-                        return -1
-                    else:
-                        # sucessfully re entered the gallery
-                        database[name]['s'] = GALLERY_LOCATION
-                        database[name]['a'].append(options.timestamp)
-
-    else:
-        data = {}
-        data['t'] = options.timestamp
-        data['g'] = {}
-        data['e'] = {}
-
-
-        if options.departure or options.room_id != None:
-            # this is the first entry, has to be an arrival
-            # can't enter a room first
-            return -1
-        if options.guest_name:
-            data['g'][options.guest_name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
-        else:
-            data['e'][options.employee_name] = {'s': GALLERY_LOCATION, 'a': [options.timestamp], 'r': ''}
-
-    result = json.dumps(data, separators=(',',':'))
-    return result
-
 def handle_single_command(options):
     log_path = options.log
 
     if (log_path == None) or (re.match('^[\w_]+$', log_path) == None):
         # we need the last argument to be the path to log
         return -1
-    if options.token == None or not options.token.isalnum():
+
+    token = options.token
+    if token == None or not token.isalnum():
         # need to submit a token and be alpha numeric
         return -1
 
     # verify exactly one emp/guest
-    if ((options.employee_name and options.guest_name) or (not options.employee_name and not options.guest_name)):
+    employee_name = options.employee_name
+    guest_name = options.guest_name
+    if ((employee_name and guest_name) or (not employee_name and not guest_name)):
         return -1
     # verify alphabetical of emp/guest
-    if (options.employee_name and not options.employee_name.isalpha()) or (options.guest_name and not options.guest_name.isalpha()):
+    if (employee_name and not employee_name.isalpha()) or (guest_name and not guest_name.isalpha()):
         return -1
     
     # verify exactly one of arrive/depart
-    if ((options.arrival and options.departure) or (not options.arrival and not options.departure)):
+    arrival = options.arrival
+    departure = options.departure
+    if ((arrival and departure) or (not arrival and not departure)):
         return -1
     # verify room id is positive
-    if (options.room_id and options.room_id < 0):
+    room_id = options.room_id
+    if (room_id and room_id < 0):
         return -1
     # verify no B option here -- also check in the handle_multiple_commands method
     if options.batch:
@@ -145,7 +51,11 @@ def handle_single_command(options):
         return -1
 
     # encrypted under the -K option passed in as a 256 hash
-    key = hashlib.sha256(options.token).digest()
+    key = hashlib.sha256(token).digest()
+
+    timestamp = options.timestamp
+    if (timestamp == None or timestamp < 0):
+        return -1
 
     if os.path.isfile(log_path):
         # appending to an existing log
@@ -154,7 +64,6 @@ def handle_single_command(options):
         f.close()
 
         obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
-
         message = obj.decrypt(raw[AES.block_size:])
 
         if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
@@ -171,14 +80,102 @@ def handle_single_command(options):
             # mucked the data
             return -2
 
+        data = json.loads(data)
+        if data['t'] >= timestamp:
+            # timestamps need to increase
+            return -1
+        data['t'] = timestamp
+
+        if guest_name:
+            database = data['g']
+            name = guest_name
+        else:
+            database = data['e']
+            name = employee_name
+
+        if departure:
+            if not name in database:
+                # no data on user
+                # a user not in our system can't leave
+                return -1
+            if room_id != None:
+                if database[name]['s'] == room_id:
+                    # sucessfully left the room
+                    # set status
+                    database[name]['s'] = GALLERY_LOCATION
+                    # show when that room was left
+                    database[name][str(room_id)].append(timestamp)
+                else:
+                    # can't leave a room not currently in
+                    return -1
+            else:
+                if database[name]['s'] == GALLERY_LOCATION:
+                    # successfully left the gallery
+                    # set status
+                    database[name]['s'] = OUT_OF_GALLERY_LOCATION
+                    # show when gallery was left
+                    database[name]['a'].append(timestamp)
+                else:
+                    # either in a room or not in gallery, can't leave it
+                    return -1
+        else:
+            # this is an arrival
+            if not name in database:
+                # no data on user
+                if room_id != None:
+                    # can't enter a room first
+                    return -1
+                else:
+                    # successfully entered gallery for first time
+                    database[name] = {'s': GALLERY_LOCATION, 'a': [timestamp], 'r': ''}
+            else:
+                if room_id != None:
+                    if database[name]['s'] == GALLERY_LOCATION:
+                        # successfully entered room
+                        # set status
+                        database[name]['s'] = room_id
+                        # set new room got to
+                        if database[name]['r'] == '':
+                            database[name]['r'] = str(room_id)
+                        else:
+                            database[name]['r'] += ',%s' % room_id
+
+                        # show when room was entered
+                        try:
+                            # add to list to log when user in room
+                            database[name][room_id].append(timestamp)
+                        except KeyError:
+                            # create new dictionary to log when user in room
+                            database[name][room_id] = [timestamp]
+                    else:
+                        # user must be in the gallery to enter another room
+                        return -1
+                else:
+                    if database[name]['s'] != OUT_OF_GALLERY_LOCATION:
+                        # can't re enter gallery except from outside the gallery
+                        return -1
+                    else:
+                        # sucessfully re entered the gallery
+                        database[name]['s'] = GALLERY_LOCATION
+                        database[name]['a'].append(timestamp)
+
     else:
         # this is a new log
-        data = None
+        data = {}
+        data['t'] = timestamp
+        data['g'] = {}
+        data['e'] = {}
 
-    result = handle_options(options, data)
+        if departure or room_id != None:
+            # this is the first entry, has to be an arrival
+            # can't enter a room first
+            return -1
+        if guest_name:
+            data['g'][guest_name] = {'s': GALLERY_LOCATION, 'a': [timestamp], 'r': ''}
+        else:
+            data['e'][employee_name] = {'s': GALLERY_LOCATION, 'a': [timestamp], 'r': ''}
 
-    if result == -1:
-        return -1
+    result = json.dumps(data, separators=(',',':'))
 
     # encrypt the json result
     f=open(log_path, 'w')
@@ -204,8 +201,7 @@ def handle_multiple_commands(options):
             # trying to call batch with batch, spec says this is bad
             sys.stderr.write("cannot call batch within batch mode")
             continue
-        call = [sys.argv[0]] + line.split()
-        subprocess.call(call)
+        subprocess.call([sys.argv[0]] + line.split())
     f.close()
     return 0
 
@@ -244,4 +240,3 @@ if result == -1:
     sys.exit(-1)
 
 sys.exit(0)
-
