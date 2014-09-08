@@ -1,7 +1,10 @@
 SHELL = bash
 
-dummy:
-	echo "no make necessary"
+all:
+	python Cython-0.20.2/cython.py logappend.py
+	python Cython-0.20.2/cython.py logread.py
+	gcc -shared -pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python2.7 -lpython2.7 -o logappend.so logappend.c
+	gcc -shared -pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python2.7 -lpython2.7 -o logread.so logread.c
 testclean: test clean
 test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail
 
@@ -160,4 +163,4 @@ testcustombatchfail:
 	diff tmp34 tmp35
 
 clean:
-	rm testcustom* tmp*
+	rm testcustom* tmp* logappend.so logread.so logappend.c logread.c
