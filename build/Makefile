@@ -163,4 +163,4 @@ testcustombatchfail:
 	diff tmp34 tmp35
 
 clean:
-	rm testcustom* tmp* logappend.so logread.so logappend.c logread.c logappend.pyc logread.pyc
+	-rm testcustom* tmp* logappend.so logread.so logappend.c logread.c logappend.pyc logread.pyc
