@@ -1,12 +1,43 @@
 SHELL = bash
 
-dummy:
-	echo "none"
-all:
-	python Cython-0.20.2/cython.py logappend.pyx
-	python Cython-0.20.2/cython.py logread.pyx
-	gcc -shared -pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python2.7 -lpython2.7 -o logappend.so logappend.c
-	gcc -shared -pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python2.7 -lpython2.7 -o logread.so logread.c
+PYTHON := python
+PYVERSION := $(shell $(PYTHON) -c "import sys; print(sys.version[:3])")
+
+INCDIR := $(shell $(PYTHON) -c "from distutils import sysconfig; print(sysconfig.get_python_inc())")
+PLATINCDIR := $(shell $(PYTHON) -c "from distutils import sysconfig; print(sysconfig.get_python_inc(plat_specific=True))")
+LIBDIR1 := $(shell $(PYTHON) -c "from distutils import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
+LIBDIR2 := $(shell $(PYTHON) -c "from distutils import sysconfig; print(sysconfig.get_config_var('LIBPL'))")
+PYLIB := $(shell $(PYTHON) -c "from distutils import sysconfig; print(sysconfig.get_config_var('LIBRARY')[3:-2])")
+
+CC := $(shell $(PYTHON) -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('CC'))")
+LINKCC := $(shell $(PYTHON) -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LINKCC'))")
+LINKFORSHARED := $(shell $(PYTHON) -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LINKFORSHARED'))")
+LIBS := $(shell $(PYTHON) -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('LIBS'))")
+SYSLIBS :=  $(shell $(PYTHON) -c "import distutils.sysconfig; print(distutils.sysconfig.get_config_var('SYSLIBS'))")
+
+all: logappend logread
+	echo "done"
+
+logappend: logappend.o
+	$(LINKCC) -o $@ $^ -L$(LIBDIR1) -L$(LIBDIR2) -l$(PYLIB) $(LIBS) $(SYSLIBS) $(LINKFORSHARED)
+
+logread: logread.o
+	$(LINKCC) -o $@ $^ -L$(LIBDIR1) -L$(LIBDIR2) -l$(PYLIB) $(LIBS) $(SYSLIBS) $(LINKFORSHARED)
+
+logappend.o: logappend.c
+	$(CC) -c $^ -I$(INCDIR) -I$(PLATINCDIR)
+
+logread.o: logread.c
+	$(CC) -c $^ -I$(INCDIR) -I$(PLATINCDIR)
+
+
+CYTHON := Cython-0.20.2/cython.py
+logappend.c: logappend.pyx
+	@$(PYTHON) $(CYTHON) --embed logappend.pyx
+
+logread.c: logread.pyx
+	@$(PYTHON) $(CYTHON) --embed logread.pyx
+
 testclean: test clean
 test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail
 
@@ -165,4 +196,5 @@ testcustombatchfail:
 	diff tmp34 tmp35
 
 clean:
-	-rm testcustom* tmp* logappend.so logread.so logappend.c logread.c logappend.pyc logread.pyc
+	-rm testcustom* tmp* logappend.c logread.c logappend.pyc logread.pyc logappend.o logread.o logread logappend
+
