@@ -195,7 +195,7 @@ def handle_read(options):
         time = 0
 
         for i in range(len(arr) / 2):
-            time += (arr[i * 2] - arr[(i * 2) + 1])
+            time += (arr[(i * 2) + 1] - arr[(i * 2)])
 
         if len(arr) % 2 == 1:
             time += (data['t'] - arr[-1])
