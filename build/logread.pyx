@@ -34,24 +34,31 @@ def handle_read(options):
     raw = f.read()
     f.close()
 
-    # decrypted under the -K option passed in as a 256 hash
-    key = hashlib.sha256(token).digest()
-    obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
+    try:
 
-    message = obj.decrypt(raw[AES.block_size:])
+        # decrypted under the -K option passed in as a 256 hash
+        key = hashlib.sha256(token).digest()
+        obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
 
-    if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
-        # token was not correct if it didn't decrypt
-        # to the hardcoded string properly
-        return -2
+        message = obj.decrypt(raw[AES.block_size:])
 
-    # hsh is sha256 which is 32 string characters
-    hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
-    log_data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
+        if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
+            # token was not correct if it didn't decrypt
+            # to the hardcoded string properly
+            return -2
 
-    if hsh != hashlib.sha256(log_data).digest():
-        # hsh was not correct, probably somebody
-        # mucked the data
+        # hsh is sha256 which is 32 string characters
+        hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
+        log_data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
+
+        if hsh != hashlib.sha256(log_data).digest():
+            # hsh was not correct, probably somebody
+            # mucked the data
+            return -2
+
+    except:
+        # beginning wasn't formatted properly
+        # this is an integrity error
         return -2
 
     # rest of data is json
