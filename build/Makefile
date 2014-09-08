@@ -1,5 +1,7 @@
 SHELL = bash
 
+dummy:
+	echo "none"
 all:
 	python Cython-0.20.2/cython.py logappend.pyx
 	python Cython-0.20.2/cython.py logread.pyx

@@ -108,9 +108,7 @@ def handle_read(options):
             sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (",".join(employees), ",".join(guests)))
 
             for room in keys:
-                values = room_info[room]
-                values.sort()
-                sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(values)))
+                sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(sorted(room_info[room]))))
 
             sys.stdout.write("</table></body></html>")
 
@@ -119,9 +117,7 @@ def handle_read(options):
             sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
 
             for room in keys:
-                values = room_info[room]
-                values.sort()
-                sys.stdout.write("\n%s: %s" % (room, ",".join(values)))
+                sys.stdout.write("\n%s: %s" % (room, ",".join(sorted(room_info[room]))))
 
 
         # success printed current state
