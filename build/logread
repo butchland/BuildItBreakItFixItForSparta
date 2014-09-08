@@ -8,7 +8,8 @@ from Crypto.Cipher import AES
 import json
 import re
 
-HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
+HARDCODED_STRING = "e6f5bfbaae"
+HARDCODED_STRING_LENGTH = len(HARDCODED_STRING)
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 
@@ -38,7 +39,7 @@ def handle_read(options):
     obj = AES.new(key, AES.MODE_CFB, nonce)
 
     message = obj.decrypt(ciphertext)
-    hardcode_attempt = message[:len(HARDCODED_STRING)]
+    hardcode_attempt = message[:HARDCODED_STRING_LENGTH]
 
     if hardcode_attempt != HARDCODED_STRING:
         # token was not correct if it didn't decrypt
@@ -46,8 +47,8 @@ def handle_read(options):
         return -2
 
     # hsh is sha256 which is 32 string characters
-    hsh = message[len(HARDCODED_STRING):len(HARDCODED_STRING) + 32]
-    log_data = message[len(HARDCODED_STRING) + 32:]
+    hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH + 32]
+    log_data = message[HARDCODED_STRING_LENGTH + 32:]
 
     if hsh != hashlib.sha256(log_data).digest():
         # hsh was not correct, probably somebody
@@ -194,14 +195,10 @@ def handle_read(options):
         time = 0
 
         for i in range(len(arr) / 2):
-            lower = arr[i * 2]
-            upper = arr[(i * 2) + 1]
-            time += (upper - lower)
+            time += (arr[i * 2] - arr[(i * 2) + 1])
 
         if len(arr) % 2 == 1:
-            lower = arr[-1]
-            upper = data['t'] # current time
-            time += (upper - lower)
+            time += (data['t'] - arr[-1])
 
         sys.stdout.write(str(time))
 

@@ -9,7 +9,8 @@ from Crypto.Cipher import AES
 import json
 import re
 
-HARDCODED_STRING = "e6f5bfbaae81a4496b5489f"
+HARDCODED_STRING = "e6f5bfbaae"
+HARDCODED_STRING_LENGTH = len(HARDCODED_STRING)
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 
@@ -102,10 +103,8 @@ def handle_options(options, log_data=None):
         data['e'] = {}
 
 
-        if options.departure:
+        if options.departure or options.room_id != None:
             # this is the first entry, has to be an arrival
-            return -1
-        if options.room_id != None:
             # can't enter a room first
             return -1
         if options.guest_name:
@@ -175,7 +174,7 @@ def handle_single_command(options):
         obj = AES.new(key, AES.MODE_CFB, nonce)
 
         message = obj.decrypt(ciphertext)
-        hardcode_attempt = message[:len(HARDCODED_STRING)]        
+        hardcode_attempt = message[:HARDCODED_STRING_LENGTH]        
 
         if hardcode_attempt != HARDCODED_STRING:
             # token was not correct if it didn't decrypt
@@ -183,8 +182,8 @@ def handle_single_command(options):
             return -2
 
         # hsh is sha256 which is 32 string characters
-        hsh = message[len(HARDCODED_STRING):len(HARDCODED_STRING) + 32]
-        data = message[len(HARDCODED_STRING) + 32:]
+        hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH + 32]
+        data = message[HARDCODED_STRING_LENGTH + 32:]
 
         if hsh != hashlib.sha256(data).digest():
             # hsh was not correct, probably somebody
