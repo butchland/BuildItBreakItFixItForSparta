@@ -81,12 +81,12 @@ def handle_single_command(options):
                 # hsh was not correct, probably somebody
                 # mucked the data
                 return -2
+            data = json.loads(data)
         except:
-            # beginning wasn't formatted properly
+            # something wasn't formatted properly
             # this is a security error
             return -2
 
-        data = json.loads(data)
         if data['t'] >= timestamp:
             # timestamps need to increase
             return -1

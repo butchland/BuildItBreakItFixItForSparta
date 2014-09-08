@@ -56,14 +56,14 @@ def handle_read(options):
             # mucked the data
             return -2
 
+        data = json.loads(log_data)
     except:
-        # beginning wasn't formatted properly
+        # wasn't formatted properly
         # this is an integrity error
         return -2
 
     # rest of data is json
 
-    data = json.loads(log_data)
 
     if options.current_state:
         guests = []
