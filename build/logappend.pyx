@@ -63,21 +63,27 @@ def handle_single_command(options):
         raw = f.read()
         f.close()
 
-        obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
-        message = obj.decrypt(raw[AES.block_size:])
+        try:
 
-        if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
-            # token was not correct if it didn't decrypt
-            # to the hardcoded string properly
-            return -2
+            obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
+            message = obj.decrypt(raw[AES.block_size:])
 
-        # hsh is sha256 which is 32 string characters
-        hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
-        data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
+            if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
+                # token was not correct if it didn't decrypt
+                # to the hardcoded string properly
+                return -2
 
-        if hsh != hashlib.sha256(data).digest():
-            # hsh was not correct, probably somebody
-            # mucked the data
+            # hsh is sha256 which is 32 string characters
+            hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
+            data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
+
+            if hsh != hashlib.sha256(data).digest():
+                # hsh was not correct, probably somebody
+                # mucked the data
+                return -2
+        except:
+            # beginning wasn't formatted properly
+            # this is a security error
             return -2
 
         data = json.loads(data)
