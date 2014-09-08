@@ -1,0 +1,441 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+import os.path
+import hashlib
+from Crypto.Cipher import AES
+import json
+import re
+
+HARDCODED_STRING = "e6f5bfbaae"
+HARDCODED_STRING_LENGTH = len(HARDCODED_STRING)
+HARDCODED_STRING_LENGTH_PLUS_32 = HARDCODED_STRING_LENGTH + 32
+GALLERY_LOCATION = -1
+OUT_OF_GALLERY_LOCATION = -2
+
+def handle_read(options):
+    log_path = options.log
+
+    if (log_path == None) or (re.match('^[\w_]+$', log_path) == None):
+        # we need the last argument to be the path to log
+        return -1
+
+    token = options.token
+    if token == None or not token.isalnum():
+        # need to submit a token and be alpha numeric
+        return -1
+
+    if not os.path.isfile(log_path):
+        # can't read non existant log
+        return -1
+
+    f=open(log_path, 'r')
+    raw = f.read()
+    f.close()
+
+    # decrypted under the -K option passed in as a 256 hash
+    key = hashlib.sha256(token).digest()
+    obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
+
+    message = obj.decrypt(raw[AES.block_size:])
+
+    if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
+        # token was not correct if it didn't decrypt
+        # to the hardcoded string properly
+        return -2
+
+    # hsh is sha256 which is 32 string characters
+    hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
+    log_data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
+
+    if hsh != hashlib.sha256(log_data).digest():
+        # hsh was not correct, probably somebody
+        # mucked the data
+        return -2
+
+    # rest of data is json
+
+    data = json.loads(log_data)
+
+    if options.current_state:
+        guests = []
+        employees = []
+        room_info = {}
+        for guest in data['g']:
+            info = data['g'][guest]
+            room = info['s']
+            if room == OUT_OF_GALLERY_LOCATION:
+                # ppl outside shouldn't show up
+                continue
+            guests.append(guest)
+            if room == GALLERY_LOCATION:
+                # don't include ppl in gallery in room analysis
+                continue
+            try:
+                room_info[room].append(guest)
+            except KeyError:
+                room_info[room] = [guest]
+        for employee in data['e']:
+            info = data['e'][employee]
+            room = info['s']
+            if room == OUT_OF_GALLERY_LOCATION:
+                # ppl outside shouldn't show up
+                continue
+            employees.append(employee)
+            if room == GALLERY_LOCATION:
+                # don't include ppl in gallery in room analysis
+                continue
+            try:
+                room_info[room].append(employee)
+            except KeyError:
+                room_info[room] = [employee]
+
+        guests.sort()
+        employees.sort()
+
+        keys = room_info.keys()
+        keys.sort()
+
+        if options.html:
+            sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (",".join(employees), ",".join(guests)))
+
+            for room in keys:
+                values = room_info[room]
+                values.sort()
+                sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(values)))
+
+            sys.stdout.write("</table></body></html>")
+
+        else:
+
+            sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
+
+            for room in keys:
+                values = room_info[room]
+                values.sort()
+                sys.stdout.write("\n%s: %s" % (room, ",".join(values)))
+
+
+        # success printed current state
+        return 0
+
+    if options.rooms_entered:
+        if options.guest_names:
+            if (options.employee_names != None) or (len(options.guest_names) != 1):
+                return -1
+            try:
+                datalog = data['g'][options.guest_names[0]]
+            except KeyError:
+                if options.html:
+                    sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr></table></body></html>")
+                # no data in the database about that person, print out empty HTML or nothing
+                return 0
+
+        else:
+            if len(options.employee_names) != 1:
+                return -1
+            try:
+                datalog = data['e'][options.employee_names[0]]
+            except KeyError:
+                if options.html:
+                    sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr></table></body></html>")
+                # no data in the database about that person, print out empty HTML or nothing
+                return 0
+
+        if options.html:
+            sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr>")
+
+            rooms = datalog['r'].split(',')
+
+            for room in rooms:
+                sys.stdout.write("<tr><td>%s</td></tr>" % room)
+
+            sys.stdout.write("</table></body></html>")
+        else:
+            sys.stdout.write(datalog['r'])
+
+        # successfully printed rooms_entered
+        return 0
+
+    if options.total_time:
+        if options.html:
+            return -1
+        if options.guest_names:
+            if (options.employee_names != None) or (len(options.guest_names) != 1):
+                return -1
+
+            try:
+                datalog = data['g'][options.guest_names[0]]
+            except KeyError:
+                # no data in the database about that person, print out nothing
+                return 0
+        else:
+            if len(options.employee_names) != 1:
+                return -1
+
+            try:
+                datalog = data['e'][options.employee_names[0]]
+            except KeyError:
+                # no data in the database about that person, print out nothing
+                return 0
+
+        arr = datalog['a'] # look at ranges in the gallery
+        time = 0
+
+        for i in range(len(arr) / 2):
+            time += (arr[(i * 2) + 1] - arr[(i * 2)])
+
+        if len(arr) % 2 == 1:
+            time += (data['t'] - arr[-1])
+
+        sys.stdout.write(str(time))
+
+        # successful print total time in gallery
+        return 0
+
+    if options.matching_rooms:
+        other_targets = []
+        # other_targets will be array of datalogs that the target needs
+        # to be in the same room as
+        if options.employee_names:
+            # use first employee as target
+            try:
+                target = data['e'][options.employee_names[0]]
+                options.employee_names.pop(0) # don't need that value anymore
+                for employee in options.employee_names:
+                    other_targets.append(data['e'][employee])
+
+                if options.guest_names:
+                    for guest in options.guest_names:
+                        other_targets.append(data['g'][guest])
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about one of the people, print out empty HTML or nothing
+                return 0
+
+
+        else:
+            try:
+                # theres no employees, use the first guest as target
+                target = data['g'][options.guest_names[0]]
+                options.guest_names.pop(0) # don't need that value anymore
+
+                for guest in options.guest_names:
+                    other_targets.append(data['g'][guest])
+            except KeyError:
+                if options.html:
+                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
+                    sys.stdout.write(html)
+                # no data in the database about one of the people, print out empty HTML or nothing
+                return 0
+
+        rooms = []
+        for room in target:
+            failed = False
+            if room == 'a' or room == 'r' or room == 's':
+                # not rooms, just data
+                continue
+            target_list = target[room]
+            if len(target_list) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                target_list.append(data['t'])
+
+            target_bounds = []
+
+            for i in range(len(target_list)/2):
+                target_bounds.append((target_list[i*2], target_list[i*2 + 1]))
+
+            for other_target in other_targets:
+                if not room in other_target:
+                    # can't match this room if one of the users never went in that room
+                    failed = True
+                    break
+                other_target_list = other_target[room]
+                if len(other_target_list) % 2 == 1:
+                    # still in the gallery, append the current time as final upper bound
+                    other_target_list.append(data['t'])
+                other_target_bounds = []
+                for i in range(len(other_target_list)/2):
+                    other_target_bounds.append((other_target_list[i*2], other_target_list[i*2 + 1]))
+
+                new_target_bounds = []
+                while len(target_bounds) != 0 and len(other_target_bounds) != 0:
+                    x, y = target_bounds[0]
+                    a, b = other_target_bounds[0]
+
+                    if x > b:
+                        other_target_bounds.pop(0)
+                    elif y < a:
+                        target_bounds.pop(0)
+                    else: # x <= b:
+                        base = max(x, a)
+                        # intersection from base up found
+                        if y < b:
+                            new_target_bounds.append((base, y))
+                            target_bounds.pop(0)
+                        elif y > b:
+                            new_target_bounds.append((base, b))
+                            other_target_bounds.pop(0)
+                        else:
+                            new_target_bounds.append((base, y))
+                            target_bounds.pop(0)
+                            other_target_bounds.pop(0)
+                if len(new_target_bounds) == 0:
+                    failed = True
+                    break
+                target_bounds = new_target_bounds
+
+
+            if not failed:
+                rooms.append(room)
+
+        rooms.sort()
+        if options.html:
+            html = "<html><body><table><tr><th>Rooms</th></tr>"
+            for room in rooms:
+                html += "<tr><td>%s</th></td>" % (room)
+            html += "</table></body></html>"
+            sys.stdout.write(html)
+        else:
+            sys.stdout.write(",".join(rooms))
+
+        # success for matching rooms
+        return
+
+    if options.all_bound:
+        if (len(options.lower_bounds) != 1) or (len(options.upper_bounds) != 1):
+            return -1
+        lower_bound = int(options.lower_bounds[0])
+        upper_bound = int(options.upper_bounds[0])
+
+        if lower_bound > upper_bound:
+            return -1
+
+        employees = []
+
+        for employee in data['e']:
+            info = data['e'][employee]
+            if len(info['a']) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                info['a'].append(data['t'])
+            if inbounds(info['a'], lower_bound, upper_bound):
+                employees.append(employee)
+
+        if len(employees) == 0:
+            return -3
+
+        employees.sort()
+
+        if options.html:
+            html = "<html><body><table><tr><th>Employees</th></tr>"
+            for employee in employees:
+                html += "<tr><td>%s</td></tr>" % employee
+            html += "</table></body></html>"
+            sys.stdout.write(html)
+        else:
+            sys.stdout.write(",".join(employees))
+
+        # success for all bound
+        return 0
+
+
+    if options.exclusive_bound:
+        if (len(options.lower_bounds) != 2) or (len(options.upper_bounds) != 2):
+            return -1
+
+        lower_bound = int(options.lower_bounds[0])
+        upper_bound = int(options.upper_bounds[0])
+
+        if lower_bound > upper_bound:
+            return -1
+
+        lower_exclude_bound = int(options.lower_bounds[1])
+        upper_exclude_bound = int(options.upper_bounds[1])
+
+        if lower_exclude_bound > upper_exclude_bound:
+            return -1
+
+        employees = []
+
+        for employee in data['e']:
+            info = data['e'][employee]
+            if len(info['a']) % 2 == 1:
+                # still in the gallery, append the current time as final upper bound
+                info['a'].append(data['t'])
+            if inbounds(info['a'], lower_bound, upper_bound):
+                if not inbounds(info['a'], lower_exclude_bound, upper_exclude_bound):
+                    employees.append(employee)
+
+        if len(employees) == 0:
+            return -3
+
+        employees.sort()
+
+        if options.html:
+            html = "<html><body><table><tr><th>Employees</th></tr>"
+            for employee in employees:
+                html += "<tr><td>%s</td></tr>" % employee
+            html += "</table></body></html>"
+            sys.stdout.write(html)
+        else:
+            sys.stdout.write(",".join(employees))
+
+        # success for exclusive bound
+        return 0
+
+
+def inbounds(arr, lower_bound, upper_bound):
+    for idx, val in enumerate(arr):
+        if val >= lower_bound:
+            if idx % 2 == 0:
+                # target just entered the gallery at the first point in the range
+                # if target entered before the upper bound then success
+                return val <= upper_bound
+            else:
+                # target just left the gallery after the lower bound which means he was in the gallery
+                # at the point of the lower bound.  Success
+                return True
+
+    # target cannot be in gallery, he has no time signatures within the bounds
+    return False
+
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-K", dest="token")
+parser.add_argument("-H", dest="html", action='store_true')
+parser.add_argument("-S", dest="current_state", action='store_true')
+parser.add_argument("-R", dest="rooms_entered", action='store_true')
+parser.add_argument("-T", dest="total_time", action='store_true')
+parser.add_argument("-I", dest="matching_rooms", action='store_true')
+parser.add_argument("-A", dest="all_bound", action='store_true')
+parser.add_argument("-B", dest="exclusive_bound", action='store_true')
+parser.add_argument("-E", dest="employee_names", action='append')
+parser.add_argument("-G", dest="guest_names", action='append')
+parser.add_argument("-L", dest="lower_bounds", action='append')
+parser.add_argument("-U", dest="upper_bounds", action='append')
+parser.add_argument('log', help='string for log path')
+
+args = parser.parse_args()
+if sum([args.current_state, args.rooms_entered, args.total_time, args.matching_rooms, args.all_bound, args.exclusive_bound]) != 1:
+    # can't specify more than one option
+    sys.stdout.write('invalid')
+    sys.exit(-1)
+
+result = handle_read(args)
+
+if result == -3:
+    # print nothing and exit with -1
+    sys.exit(-1)
+
+if result == -2:
+    sys.stderr.write("integrity violation")
+    sys.exit(-1)
+if result == -1:
+    sys.stdout.write('invalid')
+    sys.exit(-1)
+
+sys.exit(0)
