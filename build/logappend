@@ -11,6 +11,7 @@ import re
 
 HARDCODED_STRING = "e6f5bfbaae"
 HARDCODED_STRING_LENGTH = len(HARDCODED_STRING)
+HARDCODED_STRING_LENGTH_PLUS_32 = HARDCODED_STRING_LENGTH + 32
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 
@@ -182,8 +183,8 @@ def handle_single_command(options):
             return -2
 
         # hsh is sha256 which is 32 string characters
-        hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH + 32]
-        data = message[HARDCODED_STRING_LENGTH + 32:]
+        hsh = message[HARDCODED_STRING_LENGTH:HARDCODED_STRING_LENGTH_PLUS_32]
+        data = message[HARDCODED_STRING_LENGTH_PLUS_32:]
 
         if hsh != hashlib.sha256(data).digest():
             # hsh was not correct, probably somebody
