@@ -15,7 +15,7 @@ HARDCODED_STRING_LENGTH_PLUS_32 = HARDCODED_STRING_LENGTH + 32
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 
-def handle_options(options, log_data=None):
+def handle_options(options, log_data):
     if log_data:
         data = json.loads(log_data)
         timestamp = data['t']
@@ -81,10 +81,10 @@ def handle_options(options, log_data=None):
                         # show when room was entered
                         try:
                             # add to list to log when user in room
-                            database[name][str(options.room_id)].append(options.timestamp)
+                            database[name][options.room_id].append(options.timestamp)
                         except KeyError:
                             # create new dictionary to log when user in room
-                            database[name][str(options.room_id)] = [options.timestamp]
+                            database[name][options.room_id] = [options.timestamp]
                     else:
                         # user must be in the gallery to enter another room
                         return -1
@@ -115,23 +115,6 @@ def handle_options(options, log_data=None):
 
     result = json.dumps(data, separators=(',',':'))
     return result
-
-def encrypt_to_file(file_path, data, options, key):
-    f=open(file_path, 'w')
-    nonce = os.urandom(AES.block_size)
-    # the hardcoded string checks the validity of the token
-    # the hash preserves integrety by being able to check it
-    # on decrypt.  Security ensured with encryption and this MAC
-    message = HARDCODED_STRING + hashlib.sha256(data).digest() + data
-
-    obj = AES.new(key, AES.MODE_CFB, nonce)
-    ciphertext = obj.encrypt(message)
-
-    # first line of file is unencrypted nonce, 2nd line is encrypted
-    # first line of encrypted is the hardcoded string, rest is log data
-    f.write(nonce + ciphertext)
-    f.close()
-
 
 def handle_single_command(options):
     log_path = options.log
@@ -169,15 +152,12 @@ def handle_single_command(options):
         f=open(log_path, 'r')
         raw = f.read()
         f.close()
-        nonce = raw[:AES.block_size]
-        ciphertext = raw[AES.block_size:]
 
-        obj = AES.new(key, AES.MODE_CFB, nonce)
+        obj = AES.new(key, AES.MODE_CFB, raw[:AES.block_size])
 
-        message = obj.decrypt(ciphertext)
-        hardcode_attempt = message[:HARDCODED_STRING_LENGTH]        
+        message = obj.decrypt(raw[AES.block_size:])
 
-        if hardcode_attempt != HARDCODED_STRING:
+        if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
             # token was not correct if it didn't decrypt
             # to the hardcoded string properly
             return -2
@@ -191,19 +171,27 @@ def handle_single_command(options):
             # mucked the data
             return -2
 
-        # rest of data is json
-        result = handle_options(options, data)
-        if result == -1:
-            return -1
-
-        # encrypt the json result
-        encrypt_to_file(log_path, result, options, key)
     else:
         # this is a new log
-        result = handle_options(options)
-        if result == -1:
-            return -1
-        encrypt_to_file(log_path, result, options, key)
+        data = None
+
+    result = handle_options(options, data)
+
+    if result == -1:
+        return -1
+
+    # encrypt the json result
+    f=open(log_path, 'w')
+    nonce = os.urandom(AES.block_size)
+    # the hardcoded string checks the validity of the token
+    # the hash preserves integrety by being able to check it
+    # on decrypt.  Security ensured with encryption and this MAC
+    message = HARDCODED_STRING + hashlib.sha256(result).digest() + result
+
+    # first line of file is unencrypted nonce, 2nd line is encrypted
+    # first line of encrypted is the hardcoded string, rest is log data
+    f.write(nonce + AES.new(key, AES.MODE_CFB, nonce).encrypt(message))
+    f.close()
 
     # success
     return 0
