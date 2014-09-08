@@ -100,23 +100,17 @@ def handle_read(options):
         keys.sort()
 
         if options.html:
-            html = "<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr>"
-            html += "<td>%s</td><td>%s</td>" % (",".join(employees), ",".join(guests))
-            html += "</tr></table>"
-
-            html += "<table><tr><th>Room ID</th><th>Occupants</th></tr>"
+            sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (",".join(employees), ",".join(guests)))
 
             for room in keys:
                 values = room_info[room]
                 values.sort()
-                html += "<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(values))
+                sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(values)))
 
-            html += "</table></body></html>"
-            sys.stdout.write(html)
+            sys.stdout.write("</table></body></html>")
 
         else:
 
-            result = [",".join(employees), ",".join(guests)]
             sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
 
             for room in keys:
@@ -136,8 +130,7 @@ def handle_read(options):
                 datalog = data['g'][options.guest_names[0]]
             except KeyError:
                 if options.html:
-                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
-                    sys.stdout.write(html)
+                    sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr></table></body></html>")
                 # no data in the database about that person, print out empty HTML or nothing
                 return 0
 
@@ -148,22 +141,19 @@ def handle_read(options):
                 datalog = data['e'][options.employee_names[0]]
             except KeyError:
                 if options.html:
-                    html = "<html><body><table><tr><th>Rooms</th></tr></table></body></html>"
-                    sys.stdout.write(html)
+                    sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr></table></body></html>")
                 # no data in the database about that person, print out empty HTML or nothing
                 return 0
 
         if options.html:
-            html = "<html><body><table><tr><th>Rooms</th></tr>"
+            sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr>")
 
             rooms = datalog['r'].split(',')
 
             for room in rooms:
-                html += "<tr><td>%s</td></tr>" % room
+                sys.stdout.write("<tr><td>%s</td></tr>" % room)
 
-            html += "</table></body></html>"
-
-            sys.stdout.write(html)
+            sys.stdout.write("</table></body></html>")
         else:
             sys.stdout.write(datalog['r'])
 
