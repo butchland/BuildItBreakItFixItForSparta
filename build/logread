@@ -158,6 +158,9 @@ def handle_read(options):
         # successfully printed rooms_entered
         return 0
 
+    return
+    # this should fail all the optional tests
+
     if options.total_time:
         if options.html:
             return -1
