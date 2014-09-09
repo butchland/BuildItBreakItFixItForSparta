@@ -8,6 +8,7 @@ import hashlib
 from Crypto.Cipher import AES
 import json
 import re
+import zlib
 
 HARDCODED_STRING = "e6f5bfbaae"
 HARDCODED_STRING_LENGTH = len(HARDCODED_STRING)
@@ -15,6 +16,7 @@ HARDCODED_STRING_LENGTH_PLUS_32 = HARDCODED_STRING_LENGTH + 32
 GALLERY_LOCATION = -1
 OUT_OF_GALLERY_LOCATION = -2
 NONCE = "\xa5\xfd\x85^\x1c\xdd\x19\xb0\xf3S\xd3\xa2\xd5\xba\xad\xe6"
+MODE = AES.MODE_CFB
 
 def handle_single_command(options):
     log_path = options.log
@@ -66,8 +68,10 @@ def handle_single_command(options):
 
         try:
 
-            obj = AES.new(key, AES.MODE_CFB, NONCE)
+            obj = AES.new(key, MODE, NONCE)
             message = obj.decrypt(raw)
+
+            message = zlib.decompress(message)
 
             if message[:HARDCODED_STRING_LENGTH] != HARDCODED_STRING:
                 # token was not correct if it didn't decrypt
@@ -191,9 +195,11 @@ def handle_single_command(options):
     # on decrypt.  Security ensured with encryption and this MAC
     message = HARDCODED_STRING + hashlib.sha256(result).digest() + result
 
+    message = zlib.compress(message)
+
     # encrypted just starts now since nonce is useless
     # first line of encrypted is the hardcoded string, rest is log data
-    f.write(AES.new(key, AES.MODE_CFB, NONCE).encrypt(message))
+    f.write(AES.new(key, MODE, NONCE).encrypt(message))
     f.close()
 
     # success
