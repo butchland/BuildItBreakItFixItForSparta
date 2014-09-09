@@ -91,7 +91,7 @@ def handle_read(options):
             except KeyError:
                 room_info[room] = [guest]
         for employee in employee_data:
-            room = data['e'][employee]['s']
+            room = employee_data[employee]['s']
             if room == OUT_OF_GALLERY_LOCATION:
                 # ppl outside shouldn't show up
                 continue
