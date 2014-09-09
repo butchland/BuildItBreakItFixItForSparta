@@ -106,18 +106,12 @@ def handle_read(options):
 
         if options.html:
             sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (",".join(employees), ",".join(guests)))
-
-            for room in keys:
-                sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(sorted(room_info[room]))))
-
+            map(lambda x: sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (x, ",".join(sorted(room_info[x])))), keys)
             sys.stdout.write("</table></body></html>")
 
         else:
-
             sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
-
-            for room in keys:
-                sys.stdout.write("\n%s: %s" % (room, ",".join(sorted(room_info[room]))))
+            map(lambda x: sys.stdout.write("\n%s: %s" % (x, ",".join(sorted(room_info[x])))), keys)
 
 
         # success printed current state
@@ -151,8 +145,7 @@ def handle_read(options):
 
             rooms = datalog['r'].split(',')
 
-            for room in rooms:
-                sys.stdout.write("<tr><td>%s</td></tr>" % room)
+            map(lambda x: sys.stdout.write("<tr><td>%s</td></tr>" % x), rooms)
 
             sys.stdout.write("</table></body></html>")
         else:
