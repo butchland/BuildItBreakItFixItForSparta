@@ -201,14 +201,16 @@ def handle_single_command(options):
 
 def handle_multiple_commands(options):
     f = open(options.log, "r")
-    for line in f.readlines():
+    lines = f.readlines()
+    f.close()
+    for line in lines:
         line = line.strip()
         if "-B" in line:
             # trying to call batch with batch, spec says this is bad
-            sys.stderr.write("cannot call batch within batch mode")
+            sys.stdout.write('invalid')
+            # print invalid and do nothing
             continue
         subprocess.call([sys.argv[0]] + line.split())
-    f.close()
     return 0
 
 parser = argparse.ArgumentParser()
