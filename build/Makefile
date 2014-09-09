@@ -1,6 +1,6 @@
 SHELL = bash
 
-all:
+dummy:
 	echo "done"
 
 testclean: test clean
