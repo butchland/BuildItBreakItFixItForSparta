@@ -4,7 +4,7 @@ all:
 	echo "done"
 
 testclean: test clean
-test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
 
 
 testcustomtotaltime:
@@ -159,6 +159,12 @@ testcustombatchfail:
 	./logread -K secret -S testcustombatchfail > tmp34
 	echo -ne "John\nJames\n0: John" > tmp35
 	diff tmp34 tmp35
+
+testcustommissingtimestamp:
+	./logappend -T 11 -K JOKIXTQE -E ERASMO -A testcustommissingtimestamp 
+	-./logappend -K JOKIXTQE -E HILDEGARDE -A testcustommissingtimestamp > tmp36
+	echo -ne "invalid" > tmp37
+	diff tmp36 tmp37 
 
 clean:
 	-rm testcustom* tmp*

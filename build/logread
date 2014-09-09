@@ -74,9 +74,11 @@ def handle_read(options):
         guests = []
         employees = []
         room_info = {}
-        for guest in data['g']:
-            info = data['g'][guest]
-            room = info['s']
+
+        guest_data = data['g']
+        employee_data = data['e']
+        for guest in guest_data:
+            room = guest_data[guest]['s']
             if room == OUT_OF_GALLERY_LOCATION:
                 # ppl outside shouldn't show up
                 continue
@@ -88,9 +90,8 @@ def handle_read(options):
                 room_info[room].append(guest)
             except KeyError:
                 room_info[room] = [guest]
-        for employee in data['e']:
-            info = data['e'][employee]
-            room = info['s']
+        for employee in employee_data:
+            room = data['e'][employee]['s']
             if room == OUT_OF_GALLERY_LOCATION:
                 # ppl outside shouldn't show up
                 continue
