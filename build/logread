@@ -71,20 +71,18 @@ def handle_read(options):
 
 
     if options.current_state:
+        guests = []
+        employees = []
         room_info = {}
 
-        guest_string = ""
-        employee_string = ""
         guest_data = data['g']
         employee_data = data['e']
-        guest_keys = sorted(guest_data)
-        employee_keys = sorted(employee_data)
-        for guest in guest_keys:
+        for guest in guest_data:
             room = guest_data[guest]['s']
             if room == OUT_OF_GALLERY_LOCATION:
                 # ppl outside shouldn't show up
                 continue
-            guest_string += "%s," % guest
+            guests.append(guest)
             if room == GALLERY_LOCATION:
                 # don't include ppl in gallery in room analysis
                 continue
@@ -97,7 +95,7 @@ def handle_read(options):
             if room == OUT_OF_GALLERY_LOCATION:
                 # ppl outside shouldn't show up
                 continue
-            employee_string += "%s," % employee
+            employees.append(employee)
             if room == GALLERY_LOCATION:
                 # don't include ppl in gallery in room analysis
                 continue
@@ -106,20 +104,20 @@ def handle_read(options):
             except KeyError:
                 room_info[room] = [employee]
 
+        guests.sort()
+        employees.sort()
+
         keys = room_info.keys()
         keys.sort()
 
-        guest_string = guest_string[:-1]
-        employee_string = employee_string[:-1]
-
         if options.html:
-            sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (employee_string, guest_string))
+            sys.stdout.write("<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>%s</td><td>%s</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr>" % (",".join(employees), ",".join(guests)))
             for room in keys:
                 sys.stdout.write("<tr><td>%s</td><td>%s</td></tr>" % (room, ",".join(sorted(room_info[room]))))
             sys.stdout.write("</table></body></html>")
 
         else:
-            sys.stdout.write("%s\n%s" % (employee_string, guest_string))
+            sys.stdout.write("%s\n%s" % (",".join(employees), ",".join(guests)))
             for room in keys:
                 sys.stdout.write("\n%s: %s" % (room, ",".join(sorted(room_info[room]))))
 
