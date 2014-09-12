@@ -1,7 +1,6 @@
 testclean: testcustom customclean
 testcustom: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
 
-
 testcustomtotaltime:
 	./logappend -T 1 -K secret -A -E Fred testcustomtotal_time
 	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomtotal_time
@@ -164,15 +163,3 @@ testcustommissingtimestamp:
 customclean:
 	-rm testcustom* tmp*
 
-
-CRTPATH=$(shell pwd)
-export GOPATH=$(CRTPATH)/../
-export CGO_ENABLED=1
-
-all:
-	@echo "GOPATH=$(GOPATH)"
-	go build --ldflags "-w -s"  bibifi/logappend
-	go build --ldflags "-w -s" bibifi/logread
-
-clean:
-	rm logread logappend
