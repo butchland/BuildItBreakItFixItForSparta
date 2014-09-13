@@ -3,8 +3,8 @@ SHELL = bash
 dummy:
 	echo "done"
 
-testclean: testcustom customclean
-testcustom: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
+testclean: test clean
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
 
 
 testcustomtotaltime:
@@ -166,6 +166,6 @@ testcustommissingtimestamp:
 	echo -ne "invalid" > tmp37
 	diff tmp36 tmp37 
 
-customclean:
+clean:
 	-rm testcustom* tmp*
 
