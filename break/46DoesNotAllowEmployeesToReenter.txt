@@ -1,0 +1,3 @@
+It seems like employees can't reenter the gallery in this implementation.
+
+There is no reason why employees can't reenter.
