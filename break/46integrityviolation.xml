@@ -10,4 +10,5 @@
       <erroutput>integrity violation</erroutput>
       <returncode>-1</returncode>
     </command>
+  </commands>
 </test>
