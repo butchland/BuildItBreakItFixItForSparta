@@ -1,3 +1,5 @@
+SHELL = bash
+
 testclean: testcustom customclean
 testcustom: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
 
