@@ -1,0 +1,93 @@
+name:                bbf
+version:             0.1.0.0
+synopsis:            build it break it challenge 2014
+homepage:            https://github.com/gmalecha/error309-bibifi
+license:             BSD3
+license-file:        LICENSE
+author:              David Darais, Dan King, Gregory Malecha, Scott Moore, Mutaambda
+maintainer:          david.darais@gmail.com, gmalecha@gmail.com
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  default-language:    Haskell2010
+  hs-source-dirs:      src
+  ghc-options:         -Wall -O3 -funfolding-use-threshold=64 -optc-O3
+  default-extensions:
+      FlexibleInstances
+    , GeneralizedNewtypeDeriving
+    , MultiParamTypeClasses
+    , ScopedTypeVariables
+    , StandaloneDeriving
+    , TemplateHaskell
+    , TupleSections
+    , UndecidableInstances
+    , RankNTypes
+  build-depends:
+      base                 == 4.6.0.1
+    , HUnit                == 1.2.5.2
+    , byteable             == 0.1.1
+    , bytestring           == 0.10.0.2
+    , cereal               == 0.3.5.2
+    , cereal-vector        == 0.2.0.1
+    , cipher-aes           == 0.2.6
+    , containers           == 0.5.0.0
+    , crypto-cipher-types  == 0.0.9
+    , crypto-random        == 0.0.7
+    , cryptohash           == 0.11.6
+    , derive               == 2.5.13
+    , directory            == 1.2.0.1
+    , mmap                 == 0.5.8
+    , mtl                  == 2.1.2
+    , system-filepath      == 0.4.7
+    , test-framework       == 0.8.0.3
+    , test-framework-hunit == 0.3.0.1
+    , text                 == 0.11.3.1
+    , time                 == 1.4.0.1
+    , vector               == 0.10.0.1
+    , zlib                 == 0.5.4.1
+  exposed-modules:
+      App
+    , CryptoUtil
+    , FileHelpers
+    , FixedSizeSerializable
+    , FixedSizeString
+    , HighLevel
+    , HighLevelTypes
+    , Lens
+    , LowLevel
+    , MidLevel
+    , MRand
+    , SafeNat
+    , Types
+    , UIInput
+    , UIOutput
+    , Util
+
+executable logread
+  default-language:    Haskell2010
+  hs-source-dirs:      src-logread
+  ghc-options:         -Wall -O3 -funfolding-use-threshold=16 -optc-O3
+  build-depends:       base == 4.6.0.1, bbf == 0.1.0.0
+  main-is:             Main.hs
+
+executable logappend
+  default-language:    Haskell2010
+  hs-source-dirs:      src-logappend
+  ghc-options:         -Wall -O3 -funfolding-use-threshold=16 -optc-O3
+  build-depends:       base == 4.6.0.1, bbf == 0.1.0.0
+  main-is:             Main.hs
+
+test-suite test-bbf
+  type:                exitcode-stdio-1.0
+  default-language:    Haskell2010
+  hs-source-dirs:      src-test
+  ghc-options:         -Wall -O3 -funfolding-use-threshold=16 -optc-O3
+  build-depends:
+      base                 == 4.6.0.1
+    , bbf                  == 0.1.0.0
+    , HUnit                == 1.2.5.2
+    , test-framework       == 0.8.0.3
+    , test-framework-hunit == 0.3.0.1
+  main-is:             Main.hs

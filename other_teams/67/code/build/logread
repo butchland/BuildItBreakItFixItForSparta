@@ -1,0 +1,159 @@
+#!/usr/bin/python
+import sys,getopt,subprocess, os.path
+
+def logappend():
+	global html
+	global show
+	global token
+	global type
+	global showrooms
+	global name
+	global verbose
+	global logfile
+	global verbose 
+	global scriptpath
+	global empRoomHistory
+	global x
+	global y
+	global xexclude
+	global yexclude
+	global exclusivebound
+	
+	options="java " 
+	
+	if verbose:
+		options +="-Ddebug=true "
+
+	classpath=scriptpath+"/classes"
+	options +="-Xmx128m -classpath " + classpath + " loghandler.LogReader \"" 
+	
+	if token:
+		options+= "token=" + token
+	if html == True:
+		options+= ",html=true" 
+	if show == True:
+		options+= ",show=true"
+	if timespent == True:
+		options += ",timespent=true" 
+	if name:
+		options+= ",name=" + name
+	if type:
+		options+= ",type=" + type
+	if showrooms == True:
+		options+= ",showrooms=true"
+	if empRoomHistory == True:
+		options+= ",empRoomHistory=true"	
+	if x:
+		options+= ",x=" + x
+	if y:
+		options+= ",y=" + y
+	if xexclude:
+		options+= ",xexclude=" + xexclude
+	if yexclude:
+		options+= ",yexclude=" + yexclude
+	if exclusivebound == True:
+		options+= ",exclusivebound=true"
+	if logfile:
+		options+= ",file=" + logfile
+			
+	options+="\""
+	returnCode = subprocess.call(options, shell=True)
+	sys.exit(returnCode)
+	
+def main(argv):
+	parseArgs(argv)
+	logappend()
+
+def validate():
+	None
+	
+def parseArgs(argv):
+	global html
+	global show
+	global token
+	global type
+	global showrooms
+	global name
+	global verbose
+	global logfile
+	global timespent
+	global empRoomHistory
+	global x
+	global y
+	global xexclude
+	global yexclude
+	global exclusivebound
+	
+	verbose=False
+	html=False
+	type=None
+	token=None
+	name=None
+	type=None
+	showrooms=False
+	logfile=None
+	show=False
+	timespent=False
+	empRoomHistory=False
+	x=None
+	y=None
+	xexclude=None
+	yexclude=None
+	exclusivebound=False
+	
+	try:
+		opts,args = getopt.getopt(argv, "vHRTSABK:E:G:L:U:")
+	except getopt.GetoptError:
+		print "Usage: logread -K <token> [-H] -S <log>"
+		print "Usage: logread -K <token> [-H] -R (-E <name> | -G <name>) <log>"
+		
+	for opt, arg in opts:
+		if opt == "-H":
+			html=True
+		elif opt == "-K":
+			token=arg
+		elif opt == "-S":
+			show=True
+		elif opt == "-E":
+			name=arg
+			type="E"
+		elif opt == "-G":
+			name=arg
+			type="G"
+		elif opt == "-R":
+			showrooms=True
+		elif opt == "-T":
+			timespent=True
+		elif opt == "-A":
+			empRoomHistory=True
+		elif opt == "-B":
+			exclusivebound=True
+		elif opt == "-L":
+			if x is None:
+				x=arg
+			else: 
+				xexclude=arg
+		elif opt == "-U":
+			if y is None:
+				y=arg
+			else: 
+				yexclude=arg
+		elif opt == "-v":
+			verbose=True
+			
+	
+	argSize = len(argv);	
+	logfile=argv[argSize-1]
+	validate()
+
+	if verbose == True:
+		print "html =", html, "token =" , token, "name =", name, "type=", type, \
+		"showrooms =", showrooms,  "verbose=", verbose,"log=", logfile, ", show = ", show
+	
+if __name__ == "__main__":
+	global scriptpath
+	scriptpath="."
+	script=sys.argv[0];
+	scriptpath=os.path.abspath(os.path.join(script, os.pardir))
+
+	main(sys.argv[1:])	

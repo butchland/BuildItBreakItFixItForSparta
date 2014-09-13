@@ -1,0 +1,5 @@
+*.pyc
+*~
+build/env/
+env
+build/testlogdb

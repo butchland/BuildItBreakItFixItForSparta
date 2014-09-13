@@ -1,0 +1,55 @@
+#!/usr/bin/python
+from sys import argv
+from hmac import HMAC
+from hashlib import md5
+from Crypto.Cipher.AES import AESCipher, MODE_CFB
+def append():
+	room_id = '-'
+	i = 0
+	while i < len(argv) - 2:
+		i += 1
+		cur, nxt = argv[i:i+2]
+		if cur == '-K':
+ 			token = nxt
+			i += 1
+		elif cur == '-T':
+			timestamp = nxt
+			i += 1
+		elif cur in ('-E','-G'):
+			eg = cur
+			name = nxt
+			i += 1
+		elif cur == '-R':
+			room_id = nxt
+			i += 1
+    		else:
+			assert cur in ('-A','-L')
+			al = cur
+	log = argv[-1]
+	assert log.isalnum()
+	try: f = open(log)
+	except IOError:
+		print >> open(log, 'w'), HMAC(token, '').hexdigest()
+		f = open(log)
+		new_file = True
+	else: new_file = False
+	mac = f.readline().strip()
+	data = f.read()
+	assert HMAC(token, data).hexdigest() == mac
+	if not new_file and int(data.splitlines()[-1].split()[0]) >= int(timestamp):
+		print 'invalid'
+		return -1
+	key = md5(token).digest()
+	iv = md5(log+'-'+timestamp).digest()
+	cipher = AESCipher(key, MODE_CFB, iv)
+	al, eg, room_id, name = [cipher.encrypt(x).encode('hex') for x in al, eg, room_id, name]
+	print >> open(log, 'a'), timestamp, al, eg, room_id, name
+	f = open(log)
+	f.readline()
+	print >> open(log, 'r+'), HMAC(token, f.read()).hexdigest()
+
+if argv[1] != '-B': exit(append())
+else:
+	for line in open(argv[2]):
+		argv[1:] = line.split()
+		append()

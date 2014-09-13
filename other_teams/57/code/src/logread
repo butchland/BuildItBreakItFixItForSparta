@@ -1,0 +1,217 @@
+#!/usr/bin/env python
+# Build it, Break it, Fix it 2014 Submission
+#  Written by team KnightSec
+
+import sys
+import getopt
+import string
+
+from common import *
+from person import Person
+from logfile import LogFile
+from eventstate import EventState,EventType
+
+LogReadAction = enum(
+  state = 1, # -S
+  rooms_by_person = 2, # -R
+  time_by_person = 3, # -T
+  rooms_occupied_simul = 4, # -I
+  time_present = 5, # -A
+  time_present_exclude = 6 # -B
+)
+
+def usage(cmd, error=None):
+  DEBUG = True
+  
+  if error is not None and DEBUG:
+    print "Error: " + error
+
+  if DEBUG:
+    print("""Usage:
+    %s -K <token> [-H] -S <log>
+    %s -K <token> [-H] -R (-E <name> | -G <name>) <log>
+
+    Optional:
+    %s -K <token> -T (-E <name> | -G <name>) <log>
+    %s -K <token> [-H] -I (-E <name> | -G <name>) [(-E <name> | -G <name>) ...] <log>
+    %s -K <token> [-H] -A -L <lower> -U <upper> <log>
+    %s -K <token> [-H] -B -L <lower1> -U <upper1> -L <lower2> -U <upper2> <log>
+    """ % (cmd, cmd, cmd, cmd, cmd, cmd))
+  else:
+    print("invalid")
+
+  sys.exit(-1)
+
+def main(argv=None):
+  if argv is None:
+    argv = sys.argv
+
+  if len(argv) == 0:
+    usage("")
+
+  exe = argv[0]
+
+  try:
+    opt, tail = getopt.getopt(argv[1:], "K:HSRE:G:TIABL:U:", ["help"])
+  except getopt.error as err:
+    usage(exe, err.msg)
+
+  # option values
+  opt_token = None
+  opt_log = None
+  opt_outputHtml = False
+  opt_action = None
+  opt_people = []
+  opt_bounds = []
+
+  # some temporary state
+  seenLower = False
+  lowerTmp = None
+
+  for o,val in opt:
+    if o == "--help":
+      usage(exe)
+    elif o == "-K": # Token
+      if not verifyStr(val, string.lowercase+string.uppercase+string.digits):
+        usage(exe, "Token must match [a-zA-Z0-9]+")
+
+      opt_token = val
+    elif o == "-E": # Token
+      if not verifyStr(val, string.lowercase+string.uppercase):
+        usage(exe, "Employee name must match [a-zA-Z]+")
+
+      opt_people.append(Person(val, False))
+    elif o == "-G": # Token
+      if not verifyStr(val, string.lowercase+string.uppercase):
+        usage(exe, "Guest name must match [a-zA-Z]+")
+
+      opt_people.append(Person(val, True))
+    elif o == "-L":
+      if not verifyStr(val, string.digits):
+        usage(exe, "Lower bound must be specified in seconds")
+      
+      if seenLower:
+        usage(exe, "Two lower bounds seen, but no upper in between!")
+
+      # we've seen a lower, now expect an upper
+      seenLower = True
+      lowerTmp = int(val, 10)
+    elif o == "-U":
+      if not verifyStr(val, string.digits):
+        usage(exe, "Upper bound must be specified in seconds")
+      
+      if not seenLower:
+        usage(exe, "Saw an upper bound before a lower bound")
+
+      # we've seen an upper. we're done
+      seenLower = False
+      final = (lowerTmp, int(val, 10))
+
+      if final[1] < final[0]:
+        usage(exe, "Upper bound was less than the matching lower bound")
+
+      opt_bounds.append(final)
+      lowerTmp = None 
+    elif o == "-H":
+      opt_outputHtml = True
+    elif o == "-S": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.state = 1 # -S
+    elif o == "-R": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.rooms_by_person = 2 # -R
+    elif o == "-T": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.time_by_person = 3 # -T
+    elif o == "-I": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.rooms_occupied_simul = 4 # -I
+    elif o == "-A": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.time_present = 5 # -A
+    elif o == "-B": 
+      if opt_action is not None:
+        usage(exe, "the " + o + " option collides with another option")
+
+      opt_action = LogReadAction.time_present_exclude = 6 # -B
+
+  # check for dangling, unmatched lower bounds
+  if seenLower:
+    usage(exe, "Done parsing args, but I never saw an upper bound for -L " + str(lowerTmp))
+
+  # we hope this is the log...
+  if len(tail) > 0:
+    opt_log = tail[0]
+
+  if opt_log is None:
+    usage(exe, "No log file specified")
+
+  if opt_token is None:
+    usage(exe, "No token specified")
+
+  log = LogFile(opt_log, opt_token)
+  state = log.unseal()
+
+  if opt_action == LogReadAction.state:
+    print state.getFormattedState(opt_outputHtml)
+  elif opt_action == LogReadAction.rooms_by_person:
+    if len(opt_people) > 1:
+      usage(exe, "-R specified with more than one person")
+    elif len(opt_people) < 1:
+      usage(exe, "-R specified without anyone")
+
+    print state.getRoomsEnteredBy(opt_people[0], opt_outputHtml)
+  elif opt_action == LogReadAction.time_by_person:
+    if len(opt_people) > 1:
+      usage(exe, "-T specified with more than one person")
+    elif len(opt_people) < 1:
+      usage(exe, "-T specified without anyone")
+
+    amt = state.getTotalTimeSpent(opt_people[0])
+
+    if amt:
+      print amt
+  elif opt_action == LogReadAction.rooms_occupied_simul:
+    if len(opt_people) < 1:
+      usage(exe, "-I specified without anyone")
+
+    outstr = state.getRoomProximity(opt_people, opt_outputHtml)
+
+    if outstr != "":
+      print outstr
+  elif opt_action == LogReadAction.time_present:
+    if len(opt_bounds) < 1:
+      usage(exe, "-A specified without any bounds")
+    elif len(opt_bounds) > 1:
+      usage(exe, "-A specified with too many bounds")
+
+    lst = state.getEmplInGalleryBetween(opt_bounds[0][0], opt_bounds[0][1])
+    print state.formatEmplSet(lst, opt_outputHtml)
+  elif opt_action == LogReadAction.time_present_exclude:
+    if len(opt_bounds) < 1:
+      usage(exe, "-B specified without any bounds")
+    elif len(opt_bounds) == 1:
+      usage(exe, "-B is missing the last bound")
+    elif len(opt_bounds) > 2:
+      usage(exe, "-B specified with too many bounds")
+
+    lst = state.getEmplInGalleryBetween(opt_bounds[0][0], opt_bounds[0][1])
+    lst2 = state.getEmplInGalleryBetween(opt_bounds[1][0], opt_bounds[1][1])
+    print state.formatEmplSet(lst-lst2, opt_outputHtml)
+  else:
+    usage(exe, "An action was never specified")
+
+  return 0
+
+if __name__ == "__main__":
+  sys.exit(main(sys.argv))

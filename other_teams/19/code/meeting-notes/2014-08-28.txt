@@ -1,0 +1,14 @@
+We looked at the problem description and started discussing possible secure
+formats for the log.  We discussed possible decompositions of the problem that
+could be worked on in isolation and made tentative plans for how to get started
+tomorrow, given everyone's different schedules.
+
+* We are hoping we can separate the logic of traversing the log data structure
+  and the security logic.
+* It was unclear if detecting malicious modification of the file should be
+  strict or lazy; it has since been clarified by the organizers that this needs
+  to be strict.
+* DD, GM and M (and Maybe DK?) plan to start working on basic functionality of
+  the system with no security (but with the future design of security in mind.)
+  Scott will be in charge of designing a security mechanism that can be bolted
+  on to a non-secure implementation.

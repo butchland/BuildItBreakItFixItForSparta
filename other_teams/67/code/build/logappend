@@ -1,0 +1,148 @@
+#!/usr/bin/python
+import sys,getopt,subprocess, os.path
+
+def logappend():
+	global timestamp
+	global token
+	global name
+	global type
+	global action
+	global room
+	global verbose
+	global batchfile
+	global logfile
+	global scriptpath
+	global batchmode
+	
+	retCode=0
+	
+	options="java " 
+	
+	if verbose:
+		options +="-Ddebug=true "
+
+	classpath=scriptpath+"/classes"
+	options +="-Xmx128m -classpath " + classpath + " loghandler.LogAppender \"" 
+	
+	if logfile:
+		options+= "file=" + logfile 
+	if token:
+		options+= ",token=" + token
+	if timestamp:
+		options+= ",time=" + timestamp
+	if name:
+		options+= ",visitor=" + name
+	if type:
+		options+= ",type=" + type
+	if action:
+		options+= ",action=" + action
+	if room:
+		options+= ",room=" + room
+	options+="\""
+	retCode = subprocess.call(options, shell=True)
+	
+	if batchmode == False:
+		sys.exit(retCode);
+		
+	
+def batchappend(batchfile):
+	global batchmode
+	batchmode=False
+	
+	try:
+		f = open(batchfile, 'r')
+		batchmode=True
+		for line in f:
+			batchOptions = line.split()
+			if verbose:
+				print "batchoptions :", batchOptions
+			main(batchOptions)
+		
+		if verbose:
+			print "processing ", batchfile, "complete"
+	except IOError:
+		print "Invalid file name", fileName
+	
+		
+def main(argv):
+	global batchfile
+	batchfile=None
+
+	parseArgs(argv)
+	
+	if batchfile:
+		batchappend(batchfile)
+		sys.exit(0)
+	else:
+		logappend()
+
+def validate():
+	None
+	
+def parseArgs(argv):
+	global timestamp
+	global token
+	global name
+	global type
+	global action
+	global room
+	global verbose
+	global batchfile
+	global logfile
+	
+	verbose=False
+	timestamp=None
+	token=None
+	name=None
+	type=None
+	action=None
+	room=None
+	logfile=None
+	
+	try:
+		opts,args = getopt.getopt(argv, "vALT:K:E:G:R:B:")
+	except getopt.GetoptError:
+		print "Usage: logappend -T <timestamp> -K <token> (-E <employee-name> | -G <guest-name>) (-A | -L) [-R <room-id>] <log>"
+		print "Usage: logappend -B <file>"
+		
+	for opt, arg in opts:
+		if opt == "-T":
+			timestamp=arg
+		elif opt == "-K":
+			token=arg
+		elif opt == "-E":
+			name=arg
+			type="E"
+		elif opt == "-G":
+			name=arg
+			type="G"
+		elif opt == "-A":
+			action="A"
+		elif opt == "-L":
+			action="L"
+		elif opt == "-R":
+			room=arg
+		elif opt == "-B":
+			batchfile=arg
+		elif opt == "-v":
+			verbose=True
+	
+	if args:
+		logfile=args[0]
+	
+	validate()
+
+	if verbose == True:
+		print "timestamp =", timestamp, "token =" , token, "name =", name, "type=", type, "action=", action, "room=", room, "batchfile=", batchfile, "verbose=", verbose,"log=", logfile
+	
+	
+if __name__ == "__main__":
+	global batchmode
+	batchmode = False
+	
+	global scriptpath
+	scriptpath="."
+	script=sys.argv[0];
+	scriptpath=os.path.abspath(os.path.join(script, os.pardir))
+
+	main(sys.argv[1:])	
