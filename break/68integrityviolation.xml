@@ -1,4 +1,4 @@
-<test team="57" type="correctness">
+<test team="68" type="correctness">
   <commands>
     <command> 
       <program>logappend</program> 

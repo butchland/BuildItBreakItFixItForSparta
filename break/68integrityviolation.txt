@@ -1,0 +1,1 @@
+if a different token is used on the log for logread then security error is printed to stderr rather than an integrity violation printed to stderr.  This is documented in the 6th to last line of https://www.builditbreakit.org/static/doc/f2014/spec/LOGREAD.html
