@@ -1,12 +1,171 @@
+SHELL = bash
 
-CRTPATH=$(shell pwd)
-export GOPATH=$(CRTPATH)/../
-export CGO_ENABLED=1
+dummy:
+	echo "done"
 
-all:
-	@echo "GOPATH=$(GOPATH)"
-	go build --ldflags "-w -s"  bibifi/logappend
-	go build --ldflags "-w -s" bibifi/logread
+testclean: test clean
+test: testcustomtotaltime testcustomexample testcustombatch testcustomsecurity testcustomallbound testcustomexclusivebound testcustommatchingrooms testcustomhtml testcustomnegativeroom testcustombatchfail testcustommissingtimestamp
+
+
+testcustomtotaltime:
+	./logappend -T 1 -K secret -A -E Fred testcustomtotal_time
+	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomtotal_time
+	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomtotal_time
+	./logappend -T 6 -K secret -L -E Fred testcustomtotal_time
+	./logappend -T 7 -K secret -A -E Fred testcustomtotal_time
+	./logappend -T 11 -K secret -L -E Fred testcustomtotal_time
+	./logread -K secret -T -E Fred testcustomtotal_time > tmp
+	echo -ne "9" > tmp1
+	diff tmp tmp1
+
+testcustomexample:
+	./logappend -T 1 -K secret -A -E Fred testcustomexample
+	./logappend -T 2 -K secret -A -G Jill testcustomexample
+	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomexample
+	./logappend -T 4 -K secret -A -G Jill -R 1 testcustomexample
+	./logread -K secret -S testcustomexample > tmp2
+	echo -ne "Fred\nJill\n1: Fred,Jill" > tmp3
+	diff tmp2 tmp3
+
+	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomexample
+	./logappend -T 6 -K secret -A -E Fred -R 2 testcustomexample
+	./logappend -T 7 -K secret -L -E Fred -R 2 testcustomexample
+	./logappend -T 8 -K secret -A -E Fred -R 3 testcustomexample
+	./logappend -T 9 -K secret -L -E Fred -R 3 testcustomexample
+	./logappend -T 10 -K secret -A -E Fred -R 1 testcustomexample
+	./logread -K secret -R -E Fred testcustomexample > tmp4
+	echo -ne "1,2,3,1" > tmp5
+	diff tmp4 tmp5
+
+testcustombatch:
+	echo -ne "-K secret -T 0 -A -E John testcustombatch\n-K secret -T 1 -A -R 0 -E John testcustombatch\n-K secret -T 2 -A -G James testcustombatch\n-K secret -T 3 -A -R 0 -G James testcustombatch" > testcustombatchfile
+	./logappend -B testcustombatchfile
+	./logread -K secret -S testcustombatch > tmp6
+	echo -ne "John\nJames\n0: James,John" > tmp7
+	diff tmp6 tmp7
+
+testcustomsecurity:
+	./logappend -T 1 -K secret -A -E Fred testcustomsecurity
+	./logappend -T 2 -K secret -A -G Jill testcustomsecurity
+	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomsecurity
+	-./logread -K CLEARLYNOTTHESECRET -S testcustomsecurity 2> tmp8
+	echo -ne "integrity violation" > tmp9
+	diff tmp8 tmp9
+
+	-./logappend -T 4 -K CLEARLYNOTTHESECRET -A -G Jill -R 1 testcustomsecurity 2> tmp10
+	echo -ne "security error" > tmp11
+	diff tmp10 tmp11
+
+testcustomallbound:
+	./logappend -T 1 -K secret -A -E Fred testcustomallbound
+	./logappend -T 2 -K secret -A -G Jill testcustomallbound
+	./logappend -T 5 -K secret -L -E Fred testcustomallbound
+	./logappend -T 9 -K secret -A -E Bob testcustomallbound
+	./logappend -T 11 -K secret -L -E Bob testcustomallbound
+	./logappend -T 12 -K secret -A -E Fred testcustomallbound
+	./logappend -T 29 -K secret -A -G Swagger testcustomallbound
+
+	./logread -K secret -A -L 1 -U 13 testcustomallbound > tmp12
+	echo -ne "Bob,Fred" > tmp13
+	diff tmp12 tmp13
+
+	./logread -K secret -A -L 5 -U 8 testcustomallbound > tmp14
+	echo -ne "Fred" > tmp15
+	diff tmp14 tmp15
+
+	./logread -K secret -A -L 6 -U 9 testcustomallbound > tmp16
+	echo -ne "Bob" > tmp17
+	diff tmp16 tmp17
+
+	./logread -K secret -A -L 17 -U 20 testcustomallbound > tmp18
+	diff tmp18 tmp15
+
+	./logread -K secret -A -L 1 -U 5 testcustomallbound > tmpcustom1
+	diff tmp15 tmpcustom1
+
+	-./logread -K secret -A -L 50 -U 51 testcustomallbound > tmp19
+	echo -ne "" > tmp20
+	diff tmp19 tmp20
+
+testcustomexclusivebound:
+	./logappend -T 1 -K secret -A -E Fred testcustomexclusivebound
+	./logappend -T 2 -K secret -A -G Jill testcustomexclusivebound
+	./logappend -T 5 -K secret -L -E Fred testcustomexclusivebound
+	./logappend -T 9 -K secret -A -E Bob testcustomexclusivebound
+	./logappend -T 11 -K secret -L -E Bob testcustomexclusivebound
+	./logappend -T 12 -K secret -A -E Fred testcustomexclusivebound
+	./logappend -T 29 -K secret -A -G Swagger testcustomexclusivebound
+
+	./logread -K secret -B -L 1 -U 13 -L 5 -U 8 testcustomexclusivebound > tmp21
+	echo -ne "Bob" > tmp22
+	diff tmp21 tmp22
+
+	./logread -K secret -B -L 1 -U 2 -L 9 -U 11 testcustomexclusivebound > tmp23
+	echo -ne "Fred" > tmp24
+	diff tmp23 tmp24
+
+	./logread -K secret -B -L 15 -U 30 -L 9 -U 11 testcustomexclusivebound > tmp25
+	diff tmp25 tmp24
+
+testcustommatchingrooms:
+	./logappend -T 11 -K JOKIXTQE -E ERASMO -A testcustommatchingrooms 
+	./logappend -T 21 -K JOKIXTQE -E HILDEGARDE -A testcustommatchingrooms 
+	./logappend -T 31 -K JOKIXTQE -E ERASMO -A -R 18 testcustommatchingrooms 
+	./logappend -T 41 -K JOKIXTQE -E HILDEGARDE -A -R 16 testcustommatchingrooms 
+	./logappend -T 51 -K JOKIXTQE -E HILDEGARDE -L -R 16 testcustommatchingrooms 
+	./logappend -T 52 -K JOKIXTQE -E HILDEGARDE -A -R 18 testcustommatchingrooms 
+	./logappend -T 53 -K JOKIXTQE -E HILDEGARDE -L -R 18 testcustommatchingrooms 
+	./logappend -T 71 -K JOKIXTQE -E ERASMO -L -R 18 testcustommatchingrooms 
+	./logappend -T 81 -K JOKIXTQE -E ERASMO -A -R 17 testcustommatchingrooms 
+	./logappend -T 91 -K JOKIXTQE -E ERASMO -L -R 17 testcustommatchingrooms
+	./logread -K JOKIXTQE -I -E ERASMO -E HILDEGARDE testcustommatchingrooms > tmp26
+	echo -ne "18" > tmp27
+	diff tmp26 tmp27
+
+testcustomhtml:
+	./logappend -T 1 -K secret -A -E Fred testcustomhtml
+	./logappend -T 2 -K secret -A -G Jill testcustomhtml
+	./logappend -T 3 -K secret -A -E Fred -R 1 testcustomhtml
+	./logappend -T 4 -K secret -A -G Jill -R 1 testcustomhtml
+	./logread -K secret -H -S testcustomhtml > tmp28
+	echo -ne "<html><body><table><tr><th>Employee</th><th>Guest</th></tr><tr><td>Fred</td><td>Jill</td></tr></table><table><tr><th>Room ID</th><th>Occupants</th></tr><tr><td>1</td><td>Fred,Jill</td></tr></table></body></html>" > tmp29
+	diff tmp28 tmp29
+
+	./logappend -T 5 -K secret -L -E Fred -R 1 testcustomhtml
+	./logappend -T 6 -K secret -A -E Fred -R 2 testcustomhtml
+	./logappend -T 7 -K secret -L -E Fred -R 2 testcustomhtml
+	./logappend -T 8 -K secret -A -E Fred -R 3 testcustomhtml
+	./logappend -T 9 -K secret -L -E Fred -R 3 testcustomhtml
+	./logappend -T 10 -K secret -A -E Fred -R 1 testcustomhtml
+	./logread -K secret -H -R -E Fred testcustomhtml > tmp30
+
+	echo -ne "<html><body><table><tr><th>Rooms</th></tr><tr><td>1</td></tr><tr><td>2</td></tr><tr><td>3</td></tr><tr><td>1</td></tr></table></body></html>" > tmp31
+	diff tmp30 tmp31
+
+testcustomnegativeroom:
+	./logappend -T 1 -K secret -A -E Fred testcustomnegativeroom
+	-./logappend -T 3 -K secret -A -E Fred -R -1 testcustomnegativeroom
+	-./logappend -T 5 -K secret -L -E Fred -R -1 testcustomnegativeroom
+	./logappend -T 6 -K secret -L -E Fred testcustomnegativeroom
+	./logappend -T 7 -K secret -A -E Fred testcustomnegativeroom
+	./logappend -T 11 -K secret -L -E Fred testcustomnegativeroom
+	./logread -K secret -R -E Fred testcustomnegativeroom > tmp32
+	echo -ne "" > tmp33
+	diff tmp32 tmp33
+
+testcustombatchfail:
+	echo -ne "-K secret -T 0 -A -E John testcustombatchfail\n-K secret -T 1 -A -R 0 -E John testcustombatchfail\n-K secret -T 2 -A -R 0 -G James testcustombatchfail\n-K secret -T 3 -A -G James testcustombatchfail" > testcustombatchfailfile
+	./logappend -B testcustombatchfailfile
+	./logread -K secret -S testcustombatchfail > tmp34
+	echo -ne "John\nJames\n0: John" > tmp35
+	diff tmp34 tmp35
+
+testcustommissingtimestamp:
+	./logappend -T 11 -K JOKIXTQE -E ERASMO -A testcustommissingtimestamp 
+	-./logappend -K JOKIXTQE -E HILDEGARDE -A testcustommissingtimestamp > tmp36
+	echo -ne "invalid" > tmp37
+	diff tmp36 tmp37 
 
 clean:
-	rm logread logappend
+	-rm testcustom* tmp*
+
