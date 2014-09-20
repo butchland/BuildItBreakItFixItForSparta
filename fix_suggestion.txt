@@ -1,0 +1,9 @@
+363, 469, 501, 511 - email?
+
+414, 468, 486, 624, 640, 668 - catch the parse arg error and supress the usage print.
+
+643, 644 - Throw error on multiple argument submission.
+
+442 - just do the fix.
+606 - just do the fix.
+
