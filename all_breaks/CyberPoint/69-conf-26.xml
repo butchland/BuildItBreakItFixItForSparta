@@ -1,0 +1,9 @@
+<test team="69" type="confidentiality" logfile="TSPPZJJS">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-T -G MA</args> 
+      <output>11</output>
+    </command>
+  </commands>
+</test>

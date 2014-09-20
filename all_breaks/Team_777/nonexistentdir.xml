@@ -1,0 +1,9 @@
+<test team="68" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 1 -K SECRET -A -G name -R 1 nonexistentdirectory/nonexistentfile</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

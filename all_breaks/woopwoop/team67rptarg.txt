@@ -1,0 +1,1 @@
+Repeated arguments shouldn't work for -R and -A

@@ -1,0 +1,4 @@
+The logappend program does not check to see if the file can be created. If a
+nonexistant file is given, it is created, but if a nonexistent directory and
+file are supplied, the file is not created and the program crashes when it
+tries to use the file.

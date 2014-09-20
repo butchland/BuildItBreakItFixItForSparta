@@ -1,0 +1,10 @@
+<test team="57" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pas -T 1 -G bob123 -A log</args>
+      <erroutput>invalid</erroutput>
+      <returncode>-1</returncode>
+    </command>
+  </commands>
+</test>

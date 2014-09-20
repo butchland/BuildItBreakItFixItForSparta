@@ -1,0 +1,49 @@
+<test team="57" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 1 -K secret -A -E Fred log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 2 -K secret -A -G Jill log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 3 -K secret -A -E Fred -R 1 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 4 -K secret -A -G Jill -R 1 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 5 -K secret -L -E Fred -R 1 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 6 -K secret -A -E Fred -R 2 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 7 -K secret -L -E Fred -R 2 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 8 -K secret -A -E Fred -R 3 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 9 -K secret -L -E Fred -R 3 log1</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 10 -K secret -A -E Fred -R 1 log1</args>
+    </command>
+    <command> 
+      <program>logread</program> 
+      <args>-K secret -R -E Fred log1</args>
+      <output>1,2,3,1</output>
+    </command>
+  </commands>
+</test>

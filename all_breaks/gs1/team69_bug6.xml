@@ -1,0 +1,13 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K Pa55w0rd -A -G Garp bug6</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K Pa55w0rd -L -G Garp -R 1 bug6</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

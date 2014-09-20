@@ -1,0 +1,1 @@
+Readlog key failure: "security error" should be printed to stderr and -1 should be returned

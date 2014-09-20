@@ -1,0 +1,1 @@
+Time should always increase, but a guest is able to enter the gallery and then enter a room at the same exact time.  No error is produced.

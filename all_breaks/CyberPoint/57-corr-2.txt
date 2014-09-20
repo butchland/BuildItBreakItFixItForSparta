@@ -1,0 +1,1 @@
+Fails to error out properly given a guest name with invalid characters.

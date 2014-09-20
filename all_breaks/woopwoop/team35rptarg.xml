@@ -1,0 +1,25 @@
+<test team="35" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K secret -G Name -A -A</args>
+      <program>logappend</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>255</returncode>
+    </command>
+    <command>
+      <args>-T 1 -K secret -G Name -A</args>
+      <program>logappend</program>
+      <output />
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+    <command>
+      <args>-T 1 -K secret -G Name -A -R 1 -R 2</args>
+      <program>logappend</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>

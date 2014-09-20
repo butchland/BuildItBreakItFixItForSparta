@@ -1,0 +1,21 @@
+<test team="47" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pas -T 1 -G bob -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pas -T 2 -G cathy -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pas -T 3 -G dan -A log</args>
+    </command>
+    <command> 
+      <program>logread</program> 
+      <args>-K pas -T -G cathy log</args>
+      <output>1</output>
+    </command>
+  </commands>
+</test>

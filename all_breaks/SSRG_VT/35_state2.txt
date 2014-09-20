@@ -1,0 +1,2 @@
+This test checks attempts to insert an illegal record to the log: leaving a room while in the main gallery. This should be disallowed, according to LOGAPPEND.html:27.
+

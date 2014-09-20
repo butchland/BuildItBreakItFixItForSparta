@@ -1,0 +1,3 @@
+logappend should print "security error" if it can not authenticate the log. (LOGAPPEND.html:39)
+
+This program CRASHES on this test case (throws an uncaught exception). This should scored as a vulnerability.

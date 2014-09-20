@@ -1,0 +1,9 @@
+<test team="68" type="correctness">
+	<commands>
+		<command>
+			<program>logappend</program>
+			<args>-T 1 -K Sue -G Ralph -A -R 1 lognew</args>
+			<output>invalid</output>
+		</command>
+	</commands>
+</test>

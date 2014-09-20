@@ -1,0 +1,4 @@
+As per the spec for LOGAPPEND (LOGAPPEND.html:9), the timestamp should be a non-negative integer. By definition, this includes zero. 
+This team's submission rejects -T 0. This behavior is incorrect.
+
+

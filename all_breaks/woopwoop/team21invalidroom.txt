@@ -1,0 +1,1 @@
+Room id should be a non-negative integer

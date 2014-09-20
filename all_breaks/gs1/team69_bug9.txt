@@ -1,0 +1,2 @@
+Both -E and -G are allowed on the command line together.
+

@@ -1,0 +1,1 @@
+Correctness violation: Note that there is no carriage return (new line) after invalid. It seems the test framework doesn't spot this but if you run "logappend ... ; echo done" you'll observe invalidUnixPrompt>

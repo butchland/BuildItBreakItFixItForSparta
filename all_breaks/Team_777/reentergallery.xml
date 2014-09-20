@@ -1,0 +1,18 @@
+<test team="51" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 1 -E Bob -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 2 -E Bob -L log</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-K secret -T 3 -E Bob -A log</args>
+      <output>invalid</output>
+     <returncode>255</returncode>
+    </command>
+  </commands>
+</test>

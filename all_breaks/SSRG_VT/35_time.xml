@@ -1,0 +1,24 @@
+<test team="35" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G GERDA -A log20032508</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 2 -K secret -G GERDA -L log20032508</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 4 -K secret -E MIKE -A log20032508</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -T -E MIKE log20032508</args>
+      <output>0</output>
+      <erroutput/>
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>
+

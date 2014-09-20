@@ -1,0 +1,10 @@
+<test team="57" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args> </args>
+      <output>invalid</output>
+      <returncode>-1</returncode>
+    </command>
+  </commands>
+</test>

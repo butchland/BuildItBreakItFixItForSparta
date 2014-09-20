@@ -1,0 +1,2 @@
+This results in a crash from trying to free an invalid memory pointer
+*** Error in `./logappend': free(): invalid next size (normal): 0x08ac77b8 ***

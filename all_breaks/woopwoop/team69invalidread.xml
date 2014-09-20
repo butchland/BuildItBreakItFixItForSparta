@@ -1,0 +1,12 @@
+<test team="69" type="correctness">
+  <inputfile name="AAAA">d29vcHdvb3A=</inputfile>
+  <commands>
+    <command>
+      <args>-K secret -S AAAA</args>
+      <program>logread</program>
+      <output />
+      <erroutput>integrity violation</erroutput>
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>

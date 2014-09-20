@@ -1,0 +1,1 @@
+There is no encryption or hashing at all

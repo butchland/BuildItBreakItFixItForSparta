@@ -1,0 +1,2 @@
+As per LOGAPPEND.html:46, leading zeros should be dropped from the room id. This submission handles such numbers as octal. (12 in base 8 is decimal 10). This is incorrect.
+

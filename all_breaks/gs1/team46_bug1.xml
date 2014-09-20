@@ -1,0 +1,21 @@
+<test team="46" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K secret -A -E Waldo bug1</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K secret -L -E Waldo bug1</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K secret -A -E Waldo bug1</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -S bug1</args>
+      <output>Waldo</output>
+    </command>
+  </commands>
+</test>

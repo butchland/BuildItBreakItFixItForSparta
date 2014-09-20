@@ -1,0 +1,4 @@
+Incorrect HTML in first table (see STATE_HTML.html).
+When the number of employees is not the same with the number of guests, the number of rows in the table should be the largest of the two, with some possible empty cells in the other table.
+This submission puts all the people in one row, using commas to separate the names.
+

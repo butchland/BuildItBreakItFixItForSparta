@@ -1,0 +1,4 @@
+This test inserts records for employee GERDA, and later queries for guest GERDA. 
+Guest GERDA is an unknown person, so logread should not print anything.
+This submission provides the answer for employee GERDA instead, which is incorrect.
+

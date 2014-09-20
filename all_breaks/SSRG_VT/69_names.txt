@@ -1,0 +1,2 @@
+This test gives a person name that contains non-alphabetic characters. This should fail, according to LOGAPPEND.html:15-18.
+This submissions allows the incorrect name to be added to the log.

@@ -1,0 +1,1 @@
+The room-id should be "non-negative integer characters with no spaces" (LOGAPPEND.html:27). In particular, this is not an integer. Thus, there is no restriction on the size. This test uses a long room-id that would not fit in 32 bits. A correct implementation would allow it.

@@ -1,0 +1,3 @@
+Correctness violation: It is possible to leave a room before entering it.
+
+"No employee or guest should leave a room without entering it." (https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html)

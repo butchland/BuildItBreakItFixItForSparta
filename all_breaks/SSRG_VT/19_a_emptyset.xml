@@ -1,0 +1,23 @@
+<test team="19" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 4 -K secret -E JOHN -A log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 6 -K secret -E JOHN -L log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 9 -K secret -E MIKE -A log3429402</args>
+    </command>
+    <command> 
+      <program>logread</program>
+      <args>-K secret -A -L 7 -U 8 log3429402</args>
+      <output></output>
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>
+

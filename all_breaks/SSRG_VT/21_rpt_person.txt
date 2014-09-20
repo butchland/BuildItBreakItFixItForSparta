@@ -1,0 +1,1 @@
+According to spec (LOGAPPEND.html:2), arguments -G or -E should be specified only once. This submission allows multiple instances of the same flag.

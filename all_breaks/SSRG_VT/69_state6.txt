@@ -1,0 +1,4 @@
+This test tries to insert an illegal entry to the log: a person leaving the gallery, without him/her having previously entered. 
+
+This submission allows this illegal behavior.
+

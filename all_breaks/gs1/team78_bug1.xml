@@ -1,0 +1,9 @@
+<test team="78" type="confidentiality" logfile="DOFYOKUJ">
+  <commands>
+    <command> 
+      <program>logread</program> />
+      <args>-R -G HARRIS</args> 
+      <output>5,17,10</output>
+    </command>
+  </commands>
+</test>

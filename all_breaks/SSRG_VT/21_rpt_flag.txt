@@ -1,0 +1,1 @@
+According to spec (LOGREAD.html:6-13), flags such as -R should be specified only once. This submission allows multiple instances of the same flag.

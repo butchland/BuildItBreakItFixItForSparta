@@ -1,0 +1,65 @@
+<test team="47" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K a -A -E Bill bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K a -A -G Will bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K a -A -E Phil bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 4 -K a -A -G Jill bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 5 -K a -A -E Bill -R 1 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 6 -K a -A -E Phil -R 2 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 7 -K a -A -G Jill -R 2 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 8 -K a -A -G Will -R 1 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 9 -K a -L -E Bill -R 1 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 10 -K a -A -E Bill -R 3 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 11 -K a -L -G Jill -R 2 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 12 -K a -L -G Will -R 1 bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 13 -K a -L -G Will bug2</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 14 -K a -A -G Jill -R 3 bug2</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K a -I -E Bill -G Jill bug2</args>
+      <output>3</output>
+    </command>
+  </commands>
+</test>

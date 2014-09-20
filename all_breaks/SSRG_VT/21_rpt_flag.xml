@@ -1,0 +1,15 @@
+<test team="21" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G MIKE -A log20032508</args>
+    </command>
+    <command>
+    	<program>logread</program>
+    	<args>-K secret -R -G JOHN -R log20032508</args>
+    	<output>invalid</output>
+    	<returncode>255</returncode>
+    </command>
+  </commands>
+</test>
+

@@ -1,0 +1,1 @@
+Correctness violation: logread should state invalid when no file exists for the specifed log

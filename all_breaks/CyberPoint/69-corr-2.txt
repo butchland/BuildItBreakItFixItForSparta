@@ -1,0 +1,1 @@
+logappend fails to verify that its guest names (following the -G option) are strictly alphabetical.

@@ -1,0 +1,3 @@
+Correctness violation: It is possible to leave the gallery without first leaving the last room visited.
+
+"No employee or guest should leave the gallery without first leaving the last room they entered." (https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html)

@@ -1,0 +1,2 @@
+Correctness violation: logappend should state invalid when no arugments are provided instead of
+"ImportError: No module named pysqlcipher"

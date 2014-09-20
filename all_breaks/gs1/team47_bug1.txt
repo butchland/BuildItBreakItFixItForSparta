@@ -1,0 +1,3 @@
+Correctness violation: logread does not support HTML output.
+
+"-H Specifies output to be in HTML (as opposed to plain text). Details in options below."  (https://www.builditbreakit.org/static/doc/f2014/spec/LOGREAD.html)

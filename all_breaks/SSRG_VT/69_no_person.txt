@@ -1,0 +1,4 @@
+This test attempts to call logappend without a guest or an employee. The program should print "invalid" and exit -1.
+
+This submission CRASHES (uncaught exception). This test should be scored as a vulnerability.
+

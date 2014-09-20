@@ -1,0 +1,1 @@
+Computes total time incorrectly for guest who hasn't left the gallery

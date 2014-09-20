@@ -1,0 +1,1 @@
+Correctness violation: logread should state "invalid" for any errors

@@ -1,0 +1,11 @@
+<test team="57" type="correctness">
+  <commands>
+    <command>
+      <args>-T a -K secret -G Name -A logfile</args>
+      <program>logappend</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>

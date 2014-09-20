@@ -1,0 +1,21 @@
+<test team="57" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G GERDA -A log8211117</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 3 -K secret -E DENNIS -A log8211117</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 5 -K secret -E MIKE -A log8211117</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -H -S log8211117</args>
+      <output>&lt;html&gt;&lt;body&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Employee&lt;/th&gt;&lt;th&gt;Guest&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;DENNIS&lt;/td&gt;&lt;td&gt;GERDA&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;MIKE&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;RoomID&lt;/th&gt;&lt;th&gt;Occupants&lt;/th&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</output>
+    </command>
+  </commands>
+</test>

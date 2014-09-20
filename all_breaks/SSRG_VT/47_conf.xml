@@ -1,0 +1,13 @@
+<test team="47" type="confidentiality" logfile="BGVYKCNH">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-S</args> 
+      <output>MARCO,RAE
+BOBBYE,DIMPLE
+6: BOBBYE
+11: DIMPLE
+13: RAE</output>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,1 @@
+Correctness violation: logappend should state invalid when no arugments are provided instead of the information provided which could be useful to a hacker

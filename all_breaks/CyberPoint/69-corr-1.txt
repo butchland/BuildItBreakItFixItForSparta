@@ -1,0 +1,1 @@
+We think the test case indicates a bug because, upon using an incorrect token, logread is supposed to print "security error" to stderr and return -1 rather than throw an assertion error.

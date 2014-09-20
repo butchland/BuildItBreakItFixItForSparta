@@ -1,0 +1,25 @@
+<test team="78" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 0 -E GERDA -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 1 -E GERDA -A -R 1 log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 2 -E GERDA -A -L 1 log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 3 -E GERDA -A -L log</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -R -G GERDA log</args>
+      <output>1</output>
+    </command>
+  </commands>
+</test>

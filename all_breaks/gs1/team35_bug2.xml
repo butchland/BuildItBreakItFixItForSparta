@@ -1,0 +1,9 @@
+<test team="35" type="correctness">
+  <commands>
+    <command>
+      <program>logread</program>
+      <args> </args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

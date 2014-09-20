@@ -1,0 +1,3 @@
+This bug is currently hidden by 68-corr-1, but if that is fixed the 
+program is unable to distinguish between between guests with names
+with the same first 255 characters. 

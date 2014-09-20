@@ -1,0 +1,9 @@
+<test team="67" type="confidentiality" logfile="CRXUQPCT">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-R -E JOSLYN</args> 
+      <output>19,20</output>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,1 @@
+This is a valid query, but the program produces an exception instead.

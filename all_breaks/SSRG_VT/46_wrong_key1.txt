@@ -1,0 +1,1 @@
+"security error" must be printed to stderr, not stdout. (LOGREAD.html:34)

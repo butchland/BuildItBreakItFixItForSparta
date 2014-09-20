@@ -1,0 +1,1 @@
+Program does not distinguish between employees and guests.

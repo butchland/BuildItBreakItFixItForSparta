@@ -1,0 +1,1 @@
+The contest spec clearly states that "Time should always increase, invoking logappend with an event at a time that is prior to the most recent event already recorded is an error. " This states prior where as this code gives an error even if the time is the exact same. 

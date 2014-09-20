@@ -1,0 +1,9 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T A -K t0ken -A -E Jill bug4</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

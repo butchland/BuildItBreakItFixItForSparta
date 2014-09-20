@@ -1,0 +1,10 @@
+<test team="78" type="confidentiality" logfile="DOFYOKUJ">
+	<commands>
+		<command> 
+			<program>logread</program>
+			<args>-R -G FOREST</args> 
+			<output>6,3</output>
+		</command>
+	</commands>
+</test>
+

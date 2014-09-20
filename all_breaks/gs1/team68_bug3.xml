@@ -1,0 +1,14 @@
+<test team="68" type="correctness">
+	<commands>
+		<command>
+			<program>logappend</program>
+			<args>-B batch.bug3</args>
+			<output>invalid</output>
+		</command>
+		<command>
+			<program>logread</program>
+			<args>-K Sue -S log3 </args>
+			<output>Ken\nRalph\n1:Ken\n2:Ralph</output>
+		</command>
+	</commands>
+</test>

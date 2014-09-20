@@ -1,0 +1,2 @@
+-T 1 -K fooBar -E Adam -A testLog
+-T 2 -K fooBar -G 1alpha -A testLog

@@ -1,0 +1,4 @@
+According to LOGAPPEND.html:30, if the log file cannot be created due to an invalid path, or any other error, logappend should print "invalid" and return -1. In this test, I supply the log file under an inexistent directory.
+
+This submission CRASHES (uncaught exception). This should be scored as a vulnerability.
+

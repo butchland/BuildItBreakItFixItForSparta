@@ -1,0 +1,9 @@
+<test team="78" type="confidentiality" logfile="DOFYOKUJ">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-R -G SPRING</args> 
+      <output>18</output>
+    </command>
+  </commands>
+</test>

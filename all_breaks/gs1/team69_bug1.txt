@@ -1,0 +1,3 @@
+Correctness violation: It is possible for a person to enter a second room before leaving the first.
+
+"An employee or guest may only occupy one room at a time." (https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html)

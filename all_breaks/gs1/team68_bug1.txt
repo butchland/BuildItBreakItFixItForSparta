@@ -1,0 +1,3 @@
+Including the -R option on a logappend command for a new log file results in 
+invalid being printed to stdout followed by a Segmentation Fault.
+

@@ -1,0 +1,4 @@
+For logread -B, two -L -U pairs are needed. This test provides only one. The output should be invalid.
+
+This program CRASHES on this test case (throws an uncaught exception). This should scored as a vulnerability.
+

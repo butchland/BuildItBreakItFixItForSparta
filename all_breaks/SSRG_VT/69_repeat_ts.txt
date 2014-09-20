@@ -1,0 +1,2 @@
+According to LOGAPPEND.html:8, "invoking logappend with an event at a time that is prior to the most recent event already recorded is an error". However, it is not an error to invoke logappend multiple times with the same timestamp. The timestamp should be monotonous, but not strictly monotonous. In this test, two unrelated events occur at the same timestamp: GERDA enters a room, while MIKE enters the gallery. This behaviour should be accepted and not result in an error.
+

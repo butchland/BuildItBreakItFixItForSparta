@@ -1,0 +1,27 @@
+<test team="67" type="correctness">
+	<commands>
+		<command>
+			<program>logappend</program>
+			<args>-T 1 -K gcu -G JOHN -A gcuLog1</args>
+		</command>
+		<command>
+			<program>logappend</program>
+			<args>-T 2 -K gcu -E JOHN -A gcuLog1</args>
+		</command>
+		<command>
+			<program>logappend</program>
+			<args>-T 3 -K gcu -G JOHN -A -R 1 gcuLog1</args>
+		</command>
+		<command>
+			<program>logappend</program>
+			<args>-T 4 -K gcu -E JOHN -A -R 2 gcuLog1</args>
+		</command>
+		<command>
+			<program>logread</program>
+			<args>-K gcu -S gcuLog1</args>
+			<output>JOHN,JOHN
+1: JOHN
+2: JOHN</output>
+		</command>
+	</commands>
+</test>

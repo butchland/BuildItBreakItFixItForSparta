@@ -1,0 +1,24 @@
+<test team="57" type="integrity" logfile="ZQGDVPLU">
+  <inputfile name="replacement">QkVFRvkCNhljDfxALmb5RtTwByhPub+6pBMgk7+IyY/GWKM66ap7ICF17/1vfW/nOov8SLakzEG2
+V+XX7a2Dln+5EGZ9Unyxh+jytwrGSoeFgEHj53JdqM4gNjZfU+cUlHS+fAH/T9swwugPJkCZTmLZ
+6WCa6mur6MgqQTerAoIY4CzH+9ns6OT4OBel34YjhxJMrrXZejZ4TsjylK6A861/+UHwUxENWpaB
+mRTxuiF/fM0J9lIMHb2EAl8BxX3cit0FHy66SiWtjG88NcQPWfYRVyoQDkQ/M43IZ9hlsZjixmop
+U/NpW1CjLROSh4NF9AYxh3xaHhwVjvE9bP9hp9EH9a1yczRht2as200L+obQivT3TW8g7QBQ2l6j
+8nMr8WgaUrARH8YEgeXnBfWrRAqP9KGb1ekLai/LTORqRcxt0omoAplE3/g1oHDrLMfzmMtsIjpd
+UvYv1sQtsR0FC3KZ2dSIo8Wy4Pdx22Jp36oG4S5+6coNh3das6R1MbsHZk41ibUmaPEgx35R+y0x
+SE2dVFC+RjZqR4hjX1XBrASCUcuWak6Spn2AR+Tbl5Py8AUEtMfIxDR48VPdihfK6GYTZyfCyDJZ
+qs+B+g4VSYpkdI7S/ZVEkggZrDXOe9oHHvP5SgM1ie3LfBsGq2VT0i3Qrxd4F/xf1qNAV8KrRGsc
+41+Mjc9srAa7dhskDwMBC8Uw/TaF+kBmeK+XeZSK215iCooiY4prKDmetxW7McnZ3x2icR2cuLcs
+W/dOPCsnzc3CHYmYHR0hHfRRXoUJ1HzfkdZ1Apwqjk96NBsyn2Sl9sDFOVMcbXeilpAlyLO0eCnb
+U8N8vZ6IbGfpSTxf0BqvzEFeb7Y/NqERVIbDpxMtx/ploap9cIXtYqP/pd+5pQu57rCZWMtNTOuv
+egTiIryJ/TrcGeZ4NBErsFRqDQlrWU2a/IdQY1Kj1Pg6O3ud4lhXCMqUQTqWKDIOxebQVAIpCX2D
+cMmeEJKHvWEk7DkZ41D/5QrWnDQ8568H7Bn/GL09R2ARknVeJuG7Ptylr5gI7LWVCTvoVUokC21n
+EPFQ7uN4TAO6F+c7xwrfCdHVIfo5sylrRvwlOrUNCi9aB4YFLuwv8rC+ddS+LZZ5FS0BdXUBoKO6
+SlA4mUAqwJItBRB1YA==</inputfile>
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-S</args> 
+    </command>
+  </commands>
+</test>

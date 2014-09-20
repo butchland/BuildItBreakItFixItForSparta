@@ -1,0 +1,1 @@
+The information about the first employee or guest who enters a room is lost if the name of the individual is 3 characters or less.

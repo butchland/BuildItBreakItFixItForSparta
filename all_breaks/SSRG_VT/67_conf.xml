@@ -1,0 +1,11 @@
+<test team="67" type="confidentiality" logfile="XDCGEHZH">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-S</args> 
+      <output>MARICELA,NIKOLE
+COLETTE
+13: MARICELA</output>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,1 @@
+Correctness violation: logappend should state "invalid" for any errors

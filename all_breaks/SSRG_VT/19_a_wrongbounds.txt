@@ -1,0 +1,2 @@
+logread -A requires a time interval to be specified with -L and -U. It is an error to have L > U.
+This submission incorrectly allows L > U.

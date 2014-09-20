@@ -1,0 +1,11 @@
+Placing a statement with the wrong password in a batch file, 
+and then trying to run that file with logappend, causes 
+a memory error and crash.
+
+Note that the XML didn't seem to have a clear way to run commands
+with batch files. The code that should be in the batch file is
+the single line: 
+
+    -K notpass -T 2 -A -E Mike newlog
+
+

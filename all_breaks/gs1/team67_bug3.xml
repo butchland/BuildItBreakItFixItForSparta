@@ -1,0 +1,13 @@
+<test team="67" type="correctness">
+	<commands>
+		<command>
+			<program>logappend</program>
+			<args>-T 1 -K gcu -G JOHN -A gcuLog3</args>
+		</command>
+		<command>
+			<program>logappend</program>
+			<args>-T 1 -K gcu -G JOHN -A -R 1 gcuLog3</args>
+			<output>invalid</output>
+		</command>
+	</commands>
+</test>

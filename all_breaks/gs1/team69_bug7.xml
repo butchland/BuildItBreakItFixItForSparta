@@ -1,0 +1,25 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K qwerty -A -G Jen bug7</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K qwerty -A -G Ken bug7</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K qwerty -A -G Len bug7</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 4 -K qwerty -A -G Len -R A bug7</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K qwerty -R -G Len bug7</args>
+      <erroroutput>A</erroroutput>
+    </command>
+  </commands>
+</test>

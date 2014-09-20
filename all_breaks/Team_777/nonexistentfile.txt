@@ -1,0 +1,2 @@
+The logappend program fails to create the file and crashes when it tries to
+use it.

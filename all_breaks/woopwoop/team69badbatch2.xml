@@ -1,0 +1,22 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K secret -G Name -A</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-B AAAAA</args>
+      <program>logappend</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+    <command>
+      <args>-K secret -S</args>
+      <program>logread</program>
+      <output>Name</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>

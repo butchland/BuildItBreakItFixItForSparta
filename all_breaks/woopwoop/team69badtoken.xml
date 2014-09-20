@@ -1,0 +1,25 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K secret -G Name -A</args>
+      <program>logappend</program>
+      <output />
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+    <command>
+      <args>-T 2 -K secrett -G NameB -A</args>
+      <program>logappend</program>
+      <output />
+      <erroutput>security error</erroutput>
+      <returncode>255</returncode>
+    </command>
+    <command>
+      <args>-K secret -S</args>
+      <program>logread</program>
+      <output>Name</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>

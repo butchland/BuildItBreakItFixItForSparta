@@ -1,0 +1,13 @@
+<test team="78" type="confidentiality" logfile="DOFYOKUJ">
+  <commands>
+    <command> 
+      <program>logread</program>
+      <args>-S</args> 
+      <output>FOREST
+ERASMO,GWEN,HARRIS,SPRING,VAUGHN
+3: FOREST
+10: HARRIS
+18: SPRING</output>
+    </command>
+  </commands>
+</test>

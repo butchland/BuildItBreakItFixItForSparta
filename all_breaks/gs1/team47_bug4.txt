@@ -1,0 +1,7 @@
+Integrity violation: Team 47's encryption methodology may be susceptible to a simple brute-force attack on the hash value of the supplied encryption token.
+
+See Line 35 of securelog.py
+
+The key is passed in as the random seed to random.Random(key).randrange.  Python hashes the key value to an integer between (-sys.maxint -1) and sys.maxint.
+
+I am currently attempting to brute-force crack a small log file using the script team47_bug4_decode.py -- should this be successful I will also submit an XML file for validation.

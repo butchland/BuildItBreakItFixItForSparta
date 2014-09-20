@@ -1,0 +1,2 @@
+This test checks logread -A, where the interval specified [L, U] partially intersects the time a person is in the gallery.
+Since John arrives at 4 and leaves at 6, querying for the interval [5,7] should show him in the gallery.

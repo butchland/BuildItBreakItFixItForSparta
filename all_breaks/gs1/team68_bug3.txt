@@ -1,0 +1,2 @@
+When run the logappend command with the batch.bug3 file,  log file is created but missing first line and  not encrypted.  May be related to bug4.
+

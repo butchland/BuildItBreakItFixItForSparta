@@ -1,0 +1,4 @@
+According to LOGAPPEND.html:30 , the log's filename may be specified with a string of alphanumeric characters (including underscores). Symbols such as @ are neither alphabetic, nor numeric, nor underscore, and thus it should not be allowed (invalid input).
+
+This submission incorrectly allows symbols such as @ in the log filename.
+

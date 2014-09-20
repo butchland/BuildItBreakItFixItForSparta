@@ -1,0 +1,1 @@
+Can run strings on file against team 78 and detect the token that was used

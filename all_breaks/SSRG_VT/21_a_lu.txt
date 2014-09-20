@@ -1,0 +1,1 @@
+According to LOGREAD.html:77, -L is always followed by -U. This is the only argument order that is required by the specification. So a program that accepts "-U 2 -L 1" is incorrect (only "-L 1 -U 2" should be accepted).

@@ -1,0 +1,19 @@
+<test team="46" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K secret -G Name -A</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-B ~/testing/file</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-K secret -S</args>
+      <program>logread</program>
+      <output>Name</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>

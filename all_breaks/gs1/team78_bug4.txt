@@ -1,0 +1,1 @@
+Correctness violation: logappend permits a person to enter the gallery at the same time as a room, spec states time must always increase

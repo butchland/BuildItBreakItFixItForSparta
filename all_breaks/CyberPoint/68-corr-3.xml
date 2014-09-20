@@ -1,0 +1,22 @@
+<test team="68" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 1 -E sup -A log2</args>
+      <output></output> 
+      <erroutput/>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 2 -E sup -A -R 1 log2</args>
+      <output></output> 
+      <erroutput/>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -R -E sup log2</args>
+      <output>1</output> 
+      <erroutput/>
+    </command>
+  </commands>
+</test>

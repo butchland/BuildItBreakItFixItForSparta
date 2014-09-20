@@ -1,0 +1,17 @@
+<test team="68" type="correctness">
+	<commands>
+		<command>
+			<program>logappend</program>
+			<args>-T 1 -K Sue -G Ken -A  lognew</args>
+		</command>
+		<command>
+			<program>logappend</program>
+			<args>-T 2 -K Sue -G Ken -A  -R1 lognew</args>
+		</command>
+		<command>
+			<program>logread</program>
+			<args> -K Sue -S lognew</args>
+			<output>Ken\n1: Ken</output>
+		</command>
+	</commands>
+</test>

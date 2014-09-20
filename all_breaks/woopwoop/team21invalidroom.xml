@@ -1,0 +1,34 @@
+<test team="21" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K 0a0 -G Name -A</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-T 2 -K 0a0 -G Name -A -R a</args>
+      <program>logappend</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>255</returncode>
+    </command>
+    <command>
+      <args>-T 3 -K 0a0 -G Name -A -R 1</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-T 4 -K 0a0 -G Name -A -R "room 1"</args>
+      <program>logread</program>
+      <output>invalid</output>
+      <erroutput />
+      <returncode>255</returncode>
+    </command>
+    <command>
+      <args>-K 0a0 -S</args>
+      <program>logread</program>
+      <output>Name
+1: Name</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,3 @@
+Correctness violation: It is possible for someone to enter a room before entering the gallery.
+
+"No employee or guest should enter a room without first entering the gallery." (https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html)

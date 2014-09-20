@@ -1,0 +1,25 @@
+<test team="47" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K secret -A -E Meg bug1</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K secret -A -E Peg bug1</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K secret -A -E Meg -R 1 bug1</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 4 -K secret -A -E Peg -R 2 bug1</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -H -S bug1</args>
+      <erroroutput>TypeError: cannot concatenate 'str' and 'int' objects</erroroutput>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,3 @@
+This test checks logread -B, where the second interval specified [L, U] partially intersects the time a person is in the gallery.
+Since Mike arrives at 4 and leaves at 7, specifying [6,7] as the second interval should exclude him from the result list.
+This submission incorrectly shows Mike too.

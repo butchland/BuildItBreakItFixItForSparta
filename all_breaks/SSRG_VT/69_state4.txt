@@ -1,0 +1,2 @@
+This test inserts an invalid record: while a person is already in the gallery, she tries to enter again. The program should reject the second entry. 
+This submission incorrectly allows it.

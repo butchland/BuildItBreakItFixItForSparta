@@ -1,0 +1,14 @@
+<test team="51" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pass -T 1 -A -E Fred newlog</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-B batch.transcript</args>
+      <batchcontents>-K notpass -T 2 -A -E Mike newlog</batchcontents>
+      <erroutput>security error</erroutput>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,9 @@
+<test team="67" type="confidentiality" logfile="CRXUQPCT">
+  <commands>
+    <command> 
+      <program>logread</program> />
+      <args>-R -G VELDA</args> 
+      <output>9</output>
+    </command>
+  </commands>
+</test>

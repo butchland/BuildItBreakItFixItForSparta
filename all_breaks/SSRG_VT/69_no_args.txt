@@ -1,0 +1,3 @@
+According to LOGAPPEND.html:2, logappend requires certain arguments. When required arguments are missing, logappend should print "invalid" and return -1 (LOGAPPEND.html:38).
+
+This submission CRASHES instead (uncaught exception). This test should be scored as a vulnerability.

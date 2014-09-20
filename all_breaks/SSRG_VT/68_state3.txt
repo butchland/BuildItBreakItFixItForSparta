@@ -1,0 +1,2 @@
+This test tries to insert an illegal entry to the log: a person currently in Room 1 tries to exit the gallery without first leaving Room 1. This should be disallowed. 
+This submission permits such illegal behavior.

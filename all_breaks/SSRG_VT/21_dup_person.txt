@@ -1,0 +1,5 @@
+According to LOGAPPEND.html:15,18 , employees and guests cannot have the same name.
+A correct program should prevent this situation by printing "invalid".
+
+This submission accepts the insertion of such an incorrect entry.
+

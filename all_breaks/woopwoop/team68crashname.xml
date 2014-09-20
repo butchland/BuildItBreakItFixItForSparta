@@ -1,0 +1,11 @@
+<test team="68" type="correctness">
+  <commands>
+    <command>
+      <args>-T 1 -K secret -A -G AaaAabAacAadAaeAafAagAahAaiAajAakAalAamAanAaoAapAaqAarAasAatAauAavAawAaxAayAazA</args>
+      <program>logappend</program>
+      <output />
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,19 @@
+<test team="57" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G GERDA -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 7 -K secret -G GERDA -A -R 4 log</args>
+    </command>
+    <command> 
+      <program>logread</program>
+      <args>-K secret -B -L 1 -U 4 log</args>
+      <output>invalid</output>
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>
+

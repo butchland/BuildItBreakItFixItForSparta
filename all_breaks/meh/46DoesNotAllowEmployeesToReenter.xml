@@ -1,0 +1,22 @@
+<test team="46" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 1 -K secret -A -E Fred test</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 2 -K secret -L -E Fred test</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 3 -K secret -A -E Fred test</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -S test</args>
+      <output>Fred
+      </output>
+    </command>
+  </commands>
+</test>

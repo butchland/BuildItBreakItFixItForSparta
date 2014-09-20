@@ -1,0 +1,3 @@
+Correctness violation: It is possible to use a non-numeric timestamp on the first logappend command.
+
+"This timestamp is formatted as the number of seconds since the gallery opened and is a non-negative integer." (https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html)

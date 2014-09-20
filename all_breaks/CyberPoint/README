@@ -1,0 +1,10 @@
+Please use this file name convention:
+
+<build it team number>-<conf|integ|corr>-<#>.xml
+
+Where:
+<build it team number> - the number of the build it team this file is attacking.
+<conf|integ|corr> - conf for a confidentiality bug
+                    integ for an integrity bug
+                    corr for a correctness bug
+<#> - some unique number for this combination of team number and conf|integ|corr

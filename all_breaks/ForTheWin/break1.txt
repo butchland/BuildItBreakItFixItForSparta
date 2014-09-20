@@ -1,0 +1,1 @@
+There is no check if the name is guest in the log file. In fact in my example, the name is an employer but I can read it with -G.

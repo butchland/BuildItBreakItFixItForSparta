@@ -1,0 +1,17 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K t0ken -A -E Jill bug5</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K t0ken -A -E Jill -R 1 bug5</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K t0ken -L -E Jill bug5</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

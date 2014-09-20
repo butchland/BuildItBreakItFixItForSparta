@@ -1,0 +1,2 @@
+According to LOGAPPEND.html:12, token should consist of only alphanumeric (a-z, A-Z, and 0-9) characters. Passing a token with invalid charracters should be an invalid input. The program should print "invalid" and exit. This program prints something else.
+

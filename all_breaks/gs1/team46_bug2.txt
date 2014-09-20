@@ -1,0 +1,3 @@
+Correctness violation: It is possible for a person to enter the gallery and a room at the same time.
+
+"Time should always increase." ( https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html )

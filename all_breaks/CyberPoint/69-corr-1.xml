@@ -1,0 +1,13 @@
+<test team="69" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K pas -T 1 -G GILBERT -A log</args>
+    </command>
+    <command> 
+      <program>logread</program> 
+      <args>-K pas2 -S log</args>
+      <erroutput>security error</erroutput>
+    </command>
+  </commands>
+</test>

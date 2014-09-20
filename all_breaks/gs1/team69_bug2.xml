@@ -1,0 +1,30 @@
+<test team="69" type="correctness">
+  <commands>
+     <command>
+       <program>logappend</program>
+       <args>-T 1 -K xyzzy -A -E Phil bug2</args>
+     </command>
+     <command>
+       <program>logappend</program>
+       <args>-T 2 -K xyzzy -A -G Phil bug2</args>
+     </command>
+     <command>
+       <program>logappend</program>
+       <args>-T 3 -K xyzzy -A -E Phil -R 1 bug2</args>
+     </command>
+     <command>
+       <program>logappend</program>
+       <args>-T 4 -K xyzzy -A -G Phil -R 2 bug2</args>
+     </command>
+     <command>
+       <program>logread</program>
+       <args>-K xyzzy -R -G Phil bug2</args>
+       <output>2</output>
+     </command>
+     <command>
+       <program>logread</program>
+       <args>-K xyzzy -R -E Phil bug2</args>
+       <output>1</output>
+     </command>
+   </commands>
+</test>

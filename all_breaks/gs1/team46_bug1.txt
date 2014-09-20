@@ -1,0 +1,3 @@
+Correctness violation: It is not possible for someone to re-enter the gallery once they have left.
+
+Found while looking at code -- lines 50-54 of state.cpp, in function State::enterGallery().

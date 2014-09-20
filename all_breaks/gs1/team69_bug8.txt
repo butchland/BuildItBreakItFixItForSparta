@@ -1,0 +1,3 @@
+Correctness violation: "Invalid" not printed on error.
+
+"If logappend must exit due to an error condition, or if the argument combination is incomplete or contradictory, logappend should print "invalid" to stdout and exit, returning a -1. " ( https://www.builditbreakit.org/static/doc/f2014/spec/LOGAPPEND.html )

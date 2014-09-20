@@ -1,0 +1,1 @@
+Key is not encrypted in log file.

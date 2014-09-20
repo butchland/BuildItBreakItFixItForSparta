@@ -1,0 +1,2 @@
+Program crashes due to a memory corruption error caused by HT_MAX_KEYLEN being 
+set to 50 and not checking the size before adding a name to the hash table.

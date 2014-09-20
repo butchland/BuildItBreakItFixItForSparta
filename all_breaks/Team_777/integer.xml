@@ -1,0 +1,17 @@
+<test team="68" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 1 -G GERDA -A log</args>
+    </command>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 4294967292 -G GERDA -A -R 16 log</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K secret -T -G GERDA log</args>
+      <output>4294967291</output>
+    </command>
+  </commands>
+</test>

@@ -1,0 +1,10 @@
+<test team="21" type="correctness">
+  <commands>
+    <command>
+      <program>logread</program>
+      <args> </args>
+      <output>invalid</output>
+      <returncode>-1</returncode>
+    </command>
+  </commands>
+</test>

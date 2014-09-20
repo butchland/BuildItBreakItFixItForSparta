@@ -1,0 +1,1 @@
+According to LOGAPPEND.html:2, only one log file must be supplied on the command line. Failure to do so, should print "invalid" and return 255 (LOGAPPEND.html:38). This submission prints some other error message and returns some other value, not complying to spec.

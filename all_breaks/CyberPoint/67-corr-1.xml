@@ -1,0 +1,11 @@
+<test team="67" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-K secret -T 1 -G &quot;BOB,type=G,action=A\&quot; ; echo \&quot;I pwn you\&quot; #&quot; -A log1</args>
+      <output>invalid</output> 
+      <erroutput/>
+      <returncode>-1</returncode>
+    </command>
+  </commands>
+</test>

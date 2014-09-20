@@ -1,0 +1,9 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T A -K qwerty -A -E Alice -G Bob two</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

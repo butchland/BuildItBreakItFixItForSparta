@@ -1,0 +1,13 @@
+<test team="46" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K abc -A -E Bob sametime</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K abc -A -E Bob -R 1 sametime</args>
+      <output>invalid</output>
+    </command>
+  </commands>
+</test>

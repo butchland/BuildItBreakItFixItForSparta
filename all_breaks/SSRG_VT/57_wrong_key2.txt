@@ -1,0 +1,4 @@
+As per LOGAPPEND.html:39,  if the supplied token does not match an existing log, "security error" should be printed to stderr and -1 returned.
+This submission prints the message to stdout instead, which is incorrect.
+
+

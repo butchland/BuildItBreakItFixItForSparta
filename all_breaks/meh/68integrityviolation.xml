@@ -1,0 +1,14 @@
+<test team="68" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program> 
+      <args>-T 1 -K secret -A -E Fred test</args>
+    </command>
+    <command> 
+      <program>logread</program> 
+      <args>-K CLEARLYNOTTHESECRET -S test</args>
+      <erroutput>integrity violation</erroutput>
+      <returncode>-1</returncode>
+    </command>
+  </commands>
+</test>

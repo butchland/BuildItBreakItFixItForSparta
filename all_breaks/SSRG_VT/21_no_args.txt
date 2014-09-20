@@ -1,0 +1,1 @@
+According to LOGAPPEND.html:2, logappend requires certain arguments. When required arguments are missing, logappend should print "invalid" and return 255 (LOGAPPEND.html:38). This submission prints some other error message and returns some other value, not complying to spec.

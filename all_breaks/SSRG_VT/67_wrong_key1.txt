@@ -1,0 +1,2 @@
+logappend should print "security error" if it can not authenticate the log. (LOGAPPEND.html:39)
+This submission prints something else.

@@ -1,0 +1,4 @@
+According to LOGREAD.html:86, if logread is given an employee or guest name that does not exist in the log, and HTML output is specified, logread should output an HTML table with no entries. The same should happen for any query that produces no output. For this test, none of the rooms are occupied, so the second table  (see STATE_HTML.html) should have no entries. 
+
+This submission drops the second table altogether.
+

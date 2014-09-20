@@ -1,0 +1,3 @@
+logread -R should only accept one person, either an employee or a guest.
+This submission allows specifying -R with multiple persons of the same kind. 
+This is incorrect.

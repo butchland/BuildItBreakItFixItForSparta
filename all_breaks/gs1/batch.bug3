@@ -1,0 +1,4 @@
+-T1 -KSue -EKen -A log3
+-T2 -KSue -EKen -A -R 1 log3
+-T3 -KSue -GRalph -A log3
+-T4 -KSue -GRalph -A -R 2 log3

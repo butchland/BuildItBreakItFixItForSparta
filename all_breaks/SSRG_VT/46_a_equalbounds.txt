@@ -1,0 +1,2 @@
+logread -A requires a time interval to be specified with -L and -U. It is an error to have L > U. logread -A with L=U is however a valid query. 
+This submission incorrectly considers L=U to be an error.

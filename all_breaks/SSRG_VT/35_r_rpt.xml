@@ -1,0 +1,47 @@
+<test team="35" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G GERDA -A log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 2 -K secret -G GERDA -A -R 1 log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 3 -K secret -E MIKE -A log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 4 -K secret -E JOHN -A log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 5 -K secret -E JOHN -A -R 1 log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 6 -K secret -E MIKE -A -R 1 log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 7 -K secret -E MIKE -L -R 1 log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 8 -K secret -E MIKE -A -R 15 log3429402</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 9 -K secret -E MIKE -L -R 15 log3429402</args>
+    </command>
+    <command> 
+      <program>logread</program>
+      <args>-K secret -R -E MIKE -E JOHN log3429402</args>
+      <output>invalid</output>
+      <returncode>255</returncode>
+    </command>
+  </commands>
+</test>
+

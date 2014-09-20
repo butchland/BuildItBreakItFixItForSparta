@@ -1,0 +1,1 @@
+Correctness violation: -I option to logread does not function as expected with more than one person specified.

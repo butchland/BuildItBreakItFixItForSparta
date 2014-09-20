@@ -1,0 +1,23 @@
+<test team="69" type="correctness">
+  <commands>
+    <command>
+      <program>logappend</program>
+      <args>-T 1 -K plugh -A -E Jane bug3</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 2 -K plugh -A -E Jane -R 1 bug3</args>
+    </command>
+    <command>
+      <program>logappend</program>
+      <args>-T 3 -K plugh -A -E Wayne -R 2 bug3</args>
+    </command>
+    <command>
+      <program>logread</program>
+      <args>-K plugh -S bug3</args>
+      <output>Jane
+
+1: Jane</output>
+    </command>
+  </commands>
+</test>

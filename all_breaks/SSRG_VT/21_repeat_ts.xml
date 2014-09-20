@@ -1,0 +1,23 @@
+<test team="21" type="correctness">
+  <commands>
+    <command> 
+      <program>logappend</program>
+      <args>-T 1 -K secret -G GERDA -A log7991063</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 2 -K secret -G GERDA -A -R 1 log7991063</args>
+    </command>
+    <command> 
+      <program>logappend</program>
+      <args>-T 2 -K secret -G MIKE -A log7991063</args>
+    </command>
+    <command> 
+      <program>logread</program>
+      <args>-K secret -S log7991063</args>
+      <output>GERDA,MIKE
+1: GERDA</output>
+    </command>
+  </commands>
+</test>
+

@@ -1,0 +1,2 @@
+As per LOGREAD.html:34, when the wrong token is used, logread should print "security error" to stderr and exit with code -1.
+This submission incorrectly prints "integrity violation".

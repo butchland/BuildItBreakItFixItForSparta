@@ -1,0 +1,20 @@
+<test team="57" type="correctness">
+  <commands>
+    <command>
+      <args>-T 2147483648 -K UTJVQIVQ -G MAYBELLE -A log2</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-T 18446744073709551615 -K UTJVQIVQ -G MAYBELLE -A -R 2147483648 log2</args>
+      <program>logappend</program>
+    </command>
+    <command>
+      <args>-K UTJVQIVQ -S log2</args>
+      <program>logread</program>
+      <output>MAYBELLE
+2147483648:MAYBELLE</output>
+      <erroutput />
+      <returncode>0</returncode>
+    </command>
+  </commands>
+</test>
