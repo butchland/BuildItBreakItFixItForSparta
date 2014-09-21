@@ -151,10 +151,11 @@ def handle_read(options):
         if options.html:
             sys.stdout.write("<html><body><table><tr><th>Rooms</th></tr>")
 
-            rooms = datalog['r'].split(',')
+            if datalog['r'] != '':
+                rooms = datalog['r'].split(',')
 
-            for room in rooms:
-                sys.stdout.write("<tr><td>%s</td></tr>" % room)
+                for room in rooms:
+                    sys.stdout.write("<tr><td>%s</td></tr>" % room)
 
             sys.stdout.write("</table></body></html>")
         else:
