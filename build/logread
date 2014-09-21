@@ -407,6 +407,14 @@ def handle_read(options):
         # success for exclusive bound
         return 0
 
+def blocking_duplicate_call(self, parser, namespace, values, option_string=None):
+    if not (getattr(namespace, self.dest) == None or getattr(namespace, self.dest) == False):
+        sys.exit(-1)
+    setattr(namespace, self.dest, self.const or values)
+
+argparse._StoreAction.__call__ = blocking_duplicate_call
+argparse._StoreConstAction.__call__ = blocking_duplicate_call
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-K", dest="token")
