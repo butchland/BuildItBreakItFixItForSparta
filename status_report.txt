@@ -1,7 +1,3 @@
-woopwoop/team21readlog submission_id=363
-Conflicting Specs. See line 87 of LOGREAD.html. Says integrity violation should be printed on nonmatching token. However the -K option in LOGREAD.html says security error should be printed
-Unfair - See Spec.
-
 woopwoop/team21integer submission_id=414
 Invalid invocation using a noninteger timestamp. Uses float. We let python handle the invalid invocation and do not print 'invalid' because the spec specifies we only need to support non-negative integers.  Judges said this was a tough call but marked as bug though.
 Meh.
@@ -14,21 +10,9 @@ woopwoop/team21time submission_id=468
 Invalid invocation using a noninteger timestamp. Uses char. This is identical to 414.
 Meh.
 
-woopwoop/team21samename submission_id=469
-The spec was updated after we could no longer submit builds to clarify that employee/guests cannot have the same name.  There was nothing we could do.
-Unfair - Changing Spec.
-
 SSRG_VT/21_many_logs submission_id=486
 Nonsupported invocation of logappend attempted with two log files. We let python handle it. References 'argument combination is incomplete or contradictory, logappend should print "invalid"'.  Argument combination is contradictory (not with itself but to spec).
 Meh.
-
-SSRG_VT/21_shtml3 submission_id=501
-They think https://www.builditbreakit.org/static/doc/f2014/spec/STATE_HTML.html should using multiple rows to display multiple employees while I interpreted it as displaying in a comma separated list. This is b/c the gallery itself IS a room.
-Unfair. Attacker assumption wrong.
-
-woopwoop/team21badbatch submission_id=511
-Nonsupported invocation of logappend with -B. Used arguments -T 2 -K secret -G NameA -A -B log. Claims should print invalid and return -1, however 'If -B is passed, logappend should always return 0.' from logappend specs.
-Unfair - See Specs.
 
 SSRG_VT/21_a_lu submission_id=606
 Cheapshot. Capitalizes on logread '-L is always followed by -U' and points out this a positional argument requirement. We don't enforce this so as long as an appropriate # of -L and -U appear we accept it. We could argue that 'follow' could mean integeral 
@@ -37,9 +21,6 @@ Meh/Bug.
 gs1/team21_bug1 submission_id=624
 Nonsupported invocation of logappend. No args. We let python handle it instead of returning -1. This is the same root cause as 486
 Meh.
-
-SSRG_VT/21_wrong_key1 submission_id=640
-Exact duplicate of 363
 
 SSRG_VT/21_rpt_person submission_id=643
 Multiple argument our system just uses last submission. They think it should print invalid instead

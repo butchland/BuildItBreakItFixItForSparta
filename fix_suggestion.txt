@@ -1,4 +1,4 @@
-363, 469, 501, 511, 640 - email?
+363, 469, 501, 511, 640 - successfully rejected
 
 414, 468, 486, 624, 668 - catch the parse arg error and supress the usage print.
 
