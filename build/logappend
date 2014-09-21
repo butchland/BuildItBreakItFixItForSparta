@@ -229,7 +229,16 @@ parser.add_argument("-R", type=int, dest="room_id")
 parser.add_argument("-B", dest="batch", action='store_true')
 parser.add_argument("log", help='string for log path or batch path')
 
-options = parser.parse_args()
+try:
+    actualstderr = sys.stderr
+    from StringIO import StringIO
+    sys.stderr = StringIO()
+    options = parser.parse_args()
+    sys.stderr = actualstderr
+except SystemExit as e:
+    sys.stderr = actualstderr
+    sys.stdout.write('invalid')
+    sys.exit(-1)
 if options.batch:
     try:
         result = handle_multiple_commands(options)

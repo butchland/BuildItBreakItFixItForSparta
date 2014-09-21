@@ -422,7 +422,17 @@ parser.add_argument("-L", dest="lower_bounds", action='append')
 parser.add_argument("-U", dest="upper_bounds", action='append')
 parser.add_argument('log', help='string for log path')
 
-args = parser.parse_args()
+try:
+    actualstderr = sys.stderr
+    from StringIO import StringIO
+    sys.stderr = StringIO()
+    args = parser.parse_args()
+    sys.stderr = actualstderr
+except SystemExit as e:
+    sys.stderr = actualstderr
+    sys.stdout.write('invalid')
+    sys.exit(-1)
+
 if sum([args.current_state, args.rooms_entered, args.total_time, args.matching_rooms, args.all_bound, args.exclusive_bound]) != 1:
     # can't specify more than one option
     sys.stdout.write('invalid')
